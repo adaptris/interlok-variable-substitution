@@ -21,10 +21,10 @@
 
   <target name="prepare-ivy" depends="install-ivy" description="Loads all the ivy definitions and settings">
   	<ivy:settings file="${basedir}/../ivy-settings.xml" />
-  	<ivy:resolve/>
+  	<ivy:resolve refresh="true"/>
 
   	<!-- set up main compile classpath using ivy dependecny management -->
-  	<ivy:cachepath pathid="main.classpath" conf="compile"/>
+  	<ivy:cachepath pathid="main.classpath" conf="compile,test"/>
   </target>
 
   <target name="publish" depends="prepare-ivy">
