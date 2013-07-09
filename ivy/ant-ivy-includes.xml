@@ -21,7 +21,7 @@
 
   <target name="prepare-ivy" depends="install-ivy" description="Loads all the ivy definitions and settings">
   	<ivy:settings file="${basedir}/../ivy-settings.xml" />
-  	<ivy:resolve refresh="true"/>
+  	<ivy:resolve refresh="true" showprogress="false"/>
 
   	<!-- set up main compile classpath using ivy dependecny management -->
   	<ivy:cachepath pathid="main.classpath" conf="compile,test"/>
