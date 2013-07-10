@@ -27,7 +27,7 @@
   	<ivy:cachepath pathid="main.classpath" conf="compile,test"/>
   </target>
 
-  <target name="publish" depends="prepare-ivy">
+  <target name="publish" depends="prepare-ivy,jar">
   	<ivy:makepom ivyfile="ivy.xml" pomfile="${project.dist.dir}/pom.xml"/>
   	<ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision.final}" overwrite="true" publishivy="true">
   	  <artifacts pattern="${project.dist.dir}/[artifact].[ext]"/>
