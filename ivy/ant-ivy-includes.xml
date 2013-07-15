@@ -2,40 +2,41 @@
 
   <target name="init-ivy">
     <property name="ivy.jar.file" value="${basedir}/../lib/ivy.jar"/>
-  	<property name="ivy.install.version" value="2.3.0"/>
-  	<property name="ivy.publish.revision.final" value="${ivy.publish.revision}"/>
-  	<property name="ivy.repo" value="nexus-snapshots"/>
+    <property name="ivy.install.version" value="2.3.0"/>
+    <property name="ivy.publish.revision.final" value="${ivy.publish.revision}"/>
+    <property name="ivy.repo" value="nexus-snapshots"/>
   </target>
 
   <target name="download-ivy" depends="init-ivy" unless="skip.ivy.download">
-	<echo message="Downloading ivy..."/>
-	<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+  <echo message="Downloading ivy..."/>
+  <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
   </target>
 
   <target name="install-ivy" depends="download-ivy" description="Install ivy">
-	<path id="ivy.lib.path">
-	  <pathelement location="${ivy.jar.file}"/>
-	</path>
-	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+  <path id="ivy.lib.path">
+    <pathelement location="${ivy.jar.file}"/>
+  </path>
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
   </target>
 
   <target name="prepare-ivy" depends="install-ivy" description="Loads all the ivy definitions and settings">
-  	<ivy:settings file="${basedir}/../ivy-settings.xml" />
-  	<ivy:resolve refresh="true" showprogress="false" log="quiet"/>
+    <property name="ivy.logging" value="quiet"/>
+    <ivy:settings file="${basedir}/../ivy-settings.xml" />
+    <ivy:resolve refresh="true" showprogress="false" log="${ivy.logging}"/>
 
-  	<!-- set up main compile classpath using ivy dependecny management -->
-  	<!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
-  	     big trouble with .dll + .LIC files
-  	-->
-  	<ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
+    <!-- set up main compile classpath using ivy dependecny management -->
+    <!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
+         big trouble with .dll + .LIC files
+    -->
+    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
   </target>
 
   <target name="publish" depends="prepare-ivy,jar">
-  	<ivy:makepom ivyfile="ivy.xml" pomfile="${project.dist.dir}/pom.xml"/>
-  	<ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision.final}" overwrite="true" publishivy="true">
-  	  <artifacts pattern="${project.dist.dir}/[artifact].[ext]"/>
-  	  <artifacts pattern="${project.dist.dir}/pom.xml"/>
-  	</ivy:publish>
+    <ivy:makepom ivyfile="ivy.xml" pomfile="${project.dist.dir}/pom.xml"/>
+    <ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision.final}" overwrite="true" publishivy="true">
+      <artifacts pattern="${project.dist.dir}/[artifact].[ext]"/>
+      <artifacts pattern="${project.dist.dir}/pom.xml"/>
+    </ivy:publish>
   </target>
 
 </project>
