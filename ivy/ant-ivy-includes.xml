@@ -24,7 +24,10 @@
   	<ivy:resolve refresh="true" showprogress="false"/>
 
   	<!-- set up main compile classpath using ivy dependecny management -->
-  	<ivy:cachepath pathid="main.classpath" conf="compile,test"/>
+  	<!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
+  	     big trouble with .dll + .LIC files
+  	-->
+  	<ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
   </target>
 
   <target name="publish" depends="prepare-ivy,jar">
