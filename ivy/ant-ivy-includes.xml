@@ -85,6 +85,49 @@
         </javadoc>
       </sequential>
     </macrodef>
+
+    <macrodef name="ydoc-javadoc-creator" uri="uri:adapter">
+      <attribute name="destdir" default="${api.doc.dir}"/>
+      <attribute name="sourcepath" default="${src.dir}"/>
+      <element name="groups" optional="true"/>
+      <sequential>
+        <delete dir ="@{destdir}" />
+        <mkdir dir ="@{destdir}" />
+        <if>
+          <and>
+            <isset property="ydoc.dir"/>
+            <available file="${ydoc.dir}" type="dir"/>
+          </and>
+          <then>
+            <adapter:create-javadocs sourcepath="@{sourcepath}" destdir="@{destdir}">
+              <ydoc-doclet>
+                <doclet name="ydoc.doclets.YStandard"
+                  path="${ydoc.dir}/lib/ydoc.jar:${ydoc.dir}/resources:${ydoc.dir}/doc">
+                  <param name="-generic"/>
+                  <param name="-umlpackagegen"/>
+                  <param name="-umltypegen"/>
+                  <param name="-filterpath" value="${ydoc.dir}/lib/ydoc.jar"/>
+                  <param name="-filter"     value="ydoc.filters.ExcludeFilter"/>
+                  <param name="-tag" value="y.precondition"/>
+                  <param name="-tag" value="y.postcondition"/>
+                  <param name="-tag" value="y.complexity"/>
+                  <param name="-tag" value="param"/>
+                  <param name="-tag" value="return"/>
+                  <param name="-tag" value="see"/>
+                  <param name="-tag" value="y.uml"/>
+                </doclet>
+              </ydoc-doclet>
+              <groups/>
+            </adapter:create-javadocs>
+          </then>
+          <else>
+            <adapter:create-javadocs sourcepath="@{sourcepath}" destdir="@{destdir}">
+              <groups/>
+            </adapter:create-javadocs>
+          </else>
+        </if>
+      </sequential>
+    </macrodef>
   </target>
 
   <target name="taskdef.init" depends="install-ivy">
