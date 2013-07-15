@@ -1,42 +1,135 @@
-<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <target name="init-ivy">
-    <property name="ivy.jar.file" value="${basedir}/../lib/ivy.jar"/>
     <property name="ivy.install.version" value="2.3.0"/>
-    <property name="ivy.publish.revision.final" value="${ivy.publish.revision}"/>
     <property name="ivy.repo" value="nexus-snapshots"/>
+    <property name="ivy.dir" value="${basedir}/../lib"/>
+    <property name="ivy.jar.file" value="${ivy.dir}/ivy.jar"/>
+    <property name="ivy.download.baseurl" value="http://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
+    <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
+    <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
   </target>
 
   <target name="download-ivy" depends="init-ivy" unless="skip.ivy.download">
-  <echo message="Downloading ivy..."/>
-  <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true"/>
+    <echo message="Downloading ivy..." level="verbose"/>
+    <get src="${ivy.download.url}" dest="${ivy.jar.file}" usetimestamp="true"/>
   </target>
 
-  <target name="install-ivy" depends="download-ivy" description="Install ivy">
-  <path id="ivy.lib.path">
-    <pathelement location="${ivy.jar.file}"/>
-  </path>
-  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+  <target name="install-ivy" depends="download-ivy">
+    <path id="ivy.lib.path">
+      <pathelement location="${ivy.jar.file}"/>
+    </path>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
   </target>
 
-  <target name="prepare-ivy" depends="install-ivy" description="Loads all the ivy definitions and settings">
+  <target name="macrodef.init" depends="init, install-ivy, taskdef.init">
+
+    <macrodef name="obfuscate" uri="uri:adapter">
+      <attribute name="input.jar"/>
+      <attribute name="output.jar"/>
+      <attribute name="yguard.report"/>
+      <sequential>
+        <obfuscate>
+          <inoutpair in="@{input.jar}" out="@{output.jar}" resources="copy"/>
+          <attribute name="Deprecated"/>
+          <rename replaceclassnamestrings="true" conservemanifest="true" logfile="@{yguard.report}">
+            <property name="expose-attributes" value="Deprecated"/>
+            <property name="language-conformity" value="legal"/>
+            <property name="naming-scheme" value="mix"/>
+            <keep>
+              <class classes="protected" methods="protected" fields="private">
+                <patternset refid="obfuscate.patternset"/>
+              </class>
+              <attribute name="Deprecated, SourceFile, LineNumberTable, RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations, RuntimeInvisibleAnnotations, RuntimeInvisibleParameterAnnotations">
+                <patternset refid="obfuscate.patternset"/>
+              </attribute>
+            </keep>
+          </rename>
+          <externalclasses>
+            <path refid="classpath.build"/>
+          </externalclasses>
+        </obfuscate>
+        <delete file="@{input.jar}"/>
+      </sequential>
+    </macrodef>
+
+
+    <macrodef name="create-javadocs" uri="uri:adapter">
+      <attribute name="destdir" default="${api.doc.dir}"/>
+      <attribute name="sourcepath" default="${src.dir}"/>
+      <element name="ydoc-doclet" optional="true"/>
+      <element name="grouping" optional="true"/>
+      <sequential>
+        <javadoc author="false" destdir="@{destdir}"  sourcepath="@{sourcepath}"
+          windowtitle="Interlok Adapter Framework API" bottom="Copyright Adaptris"
+          access="protected" breakiterator="yes" verbose="no"
+          charset="ISO-8859-1" >
+          <arg value="-quiet"/>
+          <packageset dir="@{sourcepath}" defaultexcludes="yes"/>
+          <classpath>
+            <path refid="main.classpath"/>
+          </classpath>
+          <ydoc-doclet/>
+          <grouping/>
+          <link offline="false" href="http://docs.oracle.com/javaee/5/api/" />
+          <link offline="false" href="http://docs.oracle.com/javase/1.5.0/docs/api/" />
+          <link offline="false" href="http://commons.apache.org/proper/commons-net/javadocs/api-3.2/"/>
+          <link offline="false" href="http://archive.eclipse.org/jetty/7.4.5.v20110725/apidocs"/>
+          <link offline="false" href="http://xml.apache.org/xalan-j/apidocs/"/>
+          <link offline="false" href="http://commons.apache.org/pool/api-1.3/"/>
+          <link offline="false" href="http://mx4j.sourceforge.net/docs/api/"/>
+          <link offline="false" href="http://www.slf4j.org/apidocs/"/>
+          <!-- current inaccessible for some reason -->
+          <!--link offline="false" href="http://activemq.apache.org/maven/5.3.2/activemq-core/apidocs/"/-->
+          <!--link offline="false" href="http://javadoc.iaik.tugraz.at/iaik_jce/current/" /-->
+        </javadoc>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="taskdef.init" depends="install-ivy">
     <property name="ivy.logging" value="quiet"/>
     <ivy:settings file="${basedir}/../ivy-settings.xml" />
-    <ivy:resolve refresh="true" showprogress="false" log="${ivy.logging}"/>
+    <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}"/>
 
+    <ivy:cachepath pathid="classpath.ant-tools" conf="ant"/>
+    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
+    <property name="anttools.classpath" refid="classpath.ant-tools"/>
+    <property name="cc.classpath" refid="main.classpath"/>
+    <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="verbose"/>
+    <echo message="Ivy Resolved Classpath for ant - ${anttools.classpath}" level="verbose"/>
+    <!-- yguard obfuscator -->
+    <taskdef name="obfuscate" classname="com.yworks.yguard.YGuardTask" classpathref="classpath.ant-tools" />
+    <!-- antcontrib (if statements) -->
+    <typedef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.ant-tools" />
+    <!-- cobertura -->
+    <taskdef classpathref="classpath.ant-tools" resource="tasks.properties" />
+    <!--
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant-tools"/>
+    -->
+  </target>
+
+
+  <target name="prepare-ivy" depends="taskdef.init, macrodef.init" description="Loads all the ivy definitions and settings">
     <!-- set up main compile classpath using ivy dependecny management -->
     <!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
          big trouble with .dll + .LIC files
     -->
-    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
   </target>
 
-  <target name="publish" depends="prepare-ivy,jar">
-    <ivy:makepom ivyfile="ivy.xml" pomfile="${project.dist.dir}/pom.xml"/>
-    <ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision.final}" overwrite="true" publishivy="true">
+  <target name="prepare-for-publish" depends="prepare-ivy, jar, javadoc">
+    <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
+      <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}/api"/>
+    </zip>
+    <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
+  </target>
+
+  <target name="publish" depends="prepare-for-publish">
+    <ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision}" overwrite="true" publishivy="true">
       <artifacts pattern="${project.dist.dir}/[artifact].[ext]"/>
       <artifacts pattern="${project.dist.dir}/pom.xml"/>
     </ivy:publish>
   </target>
+
 
 </project>
