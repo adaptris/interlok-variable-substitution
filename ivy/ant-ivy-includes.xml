@@ -21,7 +21,7 @@
 
   <target name="prepare-ivy" depends="install-ivy" description="Loads all the ivy definitions and settings">
   	<ivy:settings file="${basedir}/../ivy-settings.xml" />
-  	<ivy:resolve refresh="true" showprogress="false"/>
+  	<ivy:resolve refresh="true" showprogress="false" log="quiet"/>
 
   	<!-- set up main compile classpath using ivy dependecny management -->
   	<!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
