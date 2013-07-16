@@ -8,6 +8,13 @@
     <property name="ivy.download.baseurl" value="http://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
+
+    <!-- For Running cobertura coverage -->
+    <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
+    <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
+    <property name="coverage.build.dir" value="${build.dir}/coverage"/>
+
+
   </target>
 
   <target name="download-ivy" depends="init-ivy" unless="skip.ivy.download">
@@ -128,7 +135,131 @@
         </if>
       </sequential>
     </macrodef>
+
+    <macrodef name="execute-tests" uri="uri:adapter">
+      <attribute name="printsummary" default="true"/>
+      <attribute name="fork" default="yes"/>
+      <attribute name="showoutput" default="no"/>
+      <attribute name="forkmode" default="once"/>
+      <sequential>
+        <if>
+          <istrue value="${no.cobertura}"/>
+          <then>
+            <adapter:execute-tests-plain printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+          </then>
+          <else>
+            <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+          </else>
+        </if>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="test-reports" uri="uri:adapter">
+      <attribute name="basedir"/>
+      <attribute name="reportdir"/>
+      <sequential>
+        <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
+        <if>
+          <isfalse value="${no.cobertura}"/>
+          <then>
+            <cobertura-report format="html" destdir="${coverage.report.html.output.dir}" datafile="${coverage.metadata.file}">
+              <fileset dir="${src.dir}">
+                <include name="**/*.java" />
+              </fileset>
+            </cobertura-report>
+          </then>
+        </if>
+        <junitreport todir="@{basedir}">
+          <fileset dir="@{basedir}">
+            <include name="TEST-*.xml" />
+          </fileset>
+          <report format="frames" todir="@{reportdir}"/>
+        </junitreport>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="execute-tests-plain" uri="uri:adapter">
+      <attribute name="printsummary" default="true"/>
+      <attribute name="fork" default="yes"/>
+      <attribute name="showoutput" default="no"/>
+      <attribute name="forkmode" default="once"/>
+      <sequential>
+        <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="execute-tests-cobertura" uri="uri:adapter">
+      <attribute name="printsummary" default="true"/>
+      <attribute name="fork" default="yes"/>
+      <attribute name="showoutput" default="no"/>
+      <attribute name="forkmode" default="once"/>
+
+      <sequential>
+        <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
+        <delete file="${coverage.metadata.file}" />
+        <delete file="${coverage.build.dir}" />
+        <mkdir dir="${coverage.build.dir}"/>
+        <mkdir dir="${coverage.report.output.dir}"/>
+        <mkdir dir="${coverage.report.html.output.dir}"/>
+        <cobertura-instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
+          <fileset dir="${classes.build.dir}"/>
+        </cobertura-instrument>
+        <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
+          <sysproperties>
+            <sysproperty key="net.sourceforge.cobertura.datafile" value="${coverage.metadata.file}" />
+          </sysproperties>
+          <prependclasspath>
+            <pathelement location="${coverage.build.dir}" />
+          </prependclasspath>
+          <appendclasspath>
+            <path refid="classpath.ant-tools"/>
+          </appendclasspath>
+        </adapter:execute-junit>
+        <cobertura-report format="xml" destdir="${coverage.report.output.dir}" datafile="${coverage.metadata.file}">
+          <fileset dir="${src.dir}">
+            <include name="**/*.java" />
+          </fileset>
+        </cobertura-report>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="execute-junit" uri="uri:adapter">
+      <attribute name="printsummary" default="true"/>
+      <attribute name="fork" default="yes"/>
+      <attribute name="showoutput" default="no"/>
+      <attribute name="forkmode" default="once"/>
+      <element name="prependclasspath" optional="true"/>
+      <element name="appendclasspath" optional="true"/>
+      <element name="sysproperties" optional="true"/>
+      <sequential>
+        <junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}" failureproperty="junit.failed">
+          <jvmarg value="-XX:-UseSplitVerifier"/>
+          <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+          <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+          <jvmarg value="-XX:+UseParNewGC"/>
+          <sysproperties/>
+          <formatter type="xml"/>
+          <batchtest todir="${tests.output.dir}">
+            <fileset dir="${testsrc.dir}">
+              <include name="${junit.test.classes}"/>
+              <exclude name="${junit.test.exclude.classes}"/>
+              <exclude name="**/AllTests.java"/>
+            </fileset>
+          </batchtest>
+          <classpath>
+            <prependclasspath/>
+            <path refid="main.classpath"/>
+            <dirset dir="${test.resources.dir}"/>
+            <pathelement path="${classes.build.dir}"/>
+            <pathelement path="${testclasses.build.dir}"/>
+            <appendclasspath/>
+          </classpath>
+        </junit>
+      </sequential>
+    </macrodef>
+
   </target>
+
 
   <target name="taskdef.init" depends="install-ivy">
     <property name="ivy.logging" value="quiet"/>
