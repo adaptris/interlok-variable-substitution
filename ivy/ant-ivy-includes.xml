@@ -141,6 +141,7 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
+      <element name="coverage-exclusions" optional="true"/>
       <sequential>
         <if>
           <istrue value="${no.cobertura}"/>
@@ -148,7 +149,11 @@
             <adapter:execute-tests-plain printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
           </then>
           <else>
-            <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+            <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
+              <cobertura-exclusions>
+                <coverage-exclusions/>
+              </cobertura-exclusions>
+            </adapter:execute-tests-cobertura>
           </else>
         </if>
       </sequential>
@@ -193,6 +198,7 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
+      <element name="cobertura-exclusions" optional="true"/>
 
       <sequential>
         <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
@@ -202,7 +208,10 @@
         <mkdir dir="${coverage.report.output.dir}"/>
         <mkdir dir="${coverage.report.html.output.dir}"/>
         <cobertura-instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
-          <fileset dir="${classes.build.dir}"/>
+          <fileset dir="${classes.build.dir}">
+            <include name="**/*.class"/>
+            <cobertura-exclusions/>
+          </fileset>
         </cobertura-instrument>
         <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
           <sysproperties>
