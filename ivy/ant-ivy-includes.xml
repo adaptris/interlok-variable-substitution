@@ -14,7 +14,6 @@
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
 
-
   </target>
 
   <target name="download-ivy" depends="init-ivy" unless="skip.ivy.download">
@@ -29,12 +28,72 @@
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
   </target>
 
+
+
+  <target name="taskdef.init" depends="install-ivy">
+    <property name="ivy.logging" value="quiet"/>
+    <ivy:settings file="${basedir}/../ivy-settings.xml" />
+    <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}"/>
+
+    <ivy:cachepath pathid="classpath.ant-tools" conf="ant"/>
+    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
+    <property name="anttools.classpath" refid="classpath.ant-tools"/>
+    <property name="cc.classpath" refid="main.classpath"/>
+    <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="verbose"/>
+    <echo message="Ivy Resolved Classpath for ant - ${anttools.classpath}" level="verbose"/>
+    <!-- yguard obfuscator -->
+    <taskdef name="obfuscate" classname="com.yworks.yguard.YGuardTask" classpathref="classpath.ant-tools" />
+    <!-- antcontrib (if statements) -->
+    <typedef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.ant-tools" />
+    <!-- cobertura -->
+    <taskdef classpathref="classpath.ant-tools" resource="tasks.properties" />
+    <!--
+    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant-tools"/>
+    -->
+  </target>
+
   <target name="macrodef.init" depends="init, install-ivy, taskdef.init">
+
+    <macrodef name="create-jar" uri="uri:adapter">
+      <attribute name="basedir"/>
+      <attribute name="jarfile"/>
+      <attribute name="manifest"/>
+      <element name="obfuscate-patternset" optional="true"/>
+      <element name="obfuscate-externals" optional="true"/>
+
+      <sequential>
+        <var name="tmp.jar" value="${build.dir}/tmp.jar"/>
+        <if>
+          <istrue value="${no.obfuscation}"/>
+          <then>
+            <jar jarfile="@{jarfile}"  manifest="@{manifest}" >
+              <fileset dir="@{basedir}"/>
+            </jar>
+          </then>
+          <else>
+            <jar jarfile="${tmp.jar}"  manifest="@{manifest}" >
+              <fileset dir="@{basedir}"/>
+            </jar>
+            <adapter:obfuscate input.jar="${tmp.jar}" output.jar="@{jarfile}">
+              <additional-patternset>
+                <obfuscate-patternset/>
+              </additional-patternset>
+              <additional-externalclasses>
+                <obfuscate-externals/>
+              </additional-externalclasses>
+            </adapter:obfuscate>
+          </else>
+        </if>
+        <var name="tmp.jar" unset="true"/>
+      </sequential>
+    </macrodef>
 
     <macrodef name="obfuscate" uri="uri:adapter">
       <attribute name="input.jar"/>
       <attribute name="output.jar"/>
-      <attribute name="yguard.report"/>
+      <attribute name="yguard.report" default="${build.dir}/yguard.xml"/>
+      <element name="additional-patternset" optional="true"/>
+      <element name="additional-externalclasses" optional="true"/>
       <sequential>
         <obfuscate>
           <inoutpair in="@{input.jar}" out="@{output.jar}" resources="copy"/>
@@ -45,15 +104,22 @@
             <property name="naming-scheme" value="mix"/>
             <keep>
               <class classes="protected" methods="protected" fields="private">
-                <patternset refid="obfuscate.patternset"/>
+                <patternset>
+                  <include name="com.adaptris.**.*"/>
+                  <additional-patternset/>
+                </patternset>
               </class>
               <attribute name="Deprecated, SourceFile, LineNumberTable, RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations, RuntimeInvisibleAnnotations, RuntimeInvisibleParameterAnnotations">
-                <patternset refid="obfuscate.patternset"/>
+                <patternset>
+                  <include name="com.adaptris.**.*"/>
+                  <additional-patternset/>
+                </patternset>
               </attribute>
             </keep>
           </rename>
           <externalclasses>
-            <path refid="classpath.build"/>
+            <path refid="main.classpath"/>
+            <additional-externalclasses/>
           </externalclasses>
         </obfuscate>
         <delete file="@{input.jar}"/>
@@ -66,15 +132,20 @@
       <attribute name="sourcepath" default="${src.dir}"/>
       <element name="ydoc-doclet" optional="true"/>
       <element name="grouping" optional="true"/>
+      <element name="additional-packageset" optional="true"/>
       <sequential>
         <javadoc author="false" destdir="@{destdir}"  sourcepath="@{sourcepath}"
           windowtitle="Interlok Adapter Framework API" bottom="Copyright Adaptris"
           access="protected" breakiterator="yes" verbose="no"
           charset="ISO-8859-1" >
           <arg value="-quiet"/>
-          <packageset dir="@{sourcepath}" defaultexcludes="yes"/>
+          <packageset dir="@{sourcepath}" defaultexcludes="yes">
+            <include name="com/adaptris/**"/>
+            <additional-packageset/>
+          </packageset>
           <classpath>
             <path refid="main.classpath"/>
+            <pathelement location="${ant.core.lib}"/>
           </classpath>
           <ydoc-doclet/>
           <grouping/>
@@ -97,6 +168,7 @@
       <attribute name="destdir" default="${api.doc.dir}"/>
       <attribute name="sourcepath" default="${src.dir}"/>
       <element name="groups" optional="true"/>
+      <element name="packages" optional="true"/>
       <sequential>
         <delete dir ="@{destdir}" />
         <mkdir dir ="@{destdir}" />
@@ -124,12 +196,22 @@
                   <param name="-tag" value="y.uml"/>
                 </doclet>
               </ydoc-doclet>
-              <groups/>
+              <grouping>
+                <groups/>
+              </grouping>
+              <additional-packageset>
+                <packages/>
+              </additional-packageset>
             </adapter:create-javadocs>
           </then>
           <else>
             <adapter:create-javadocs sourcepath="@{sourcepath}" destdir="@{destdir}">
-              <groups/>
+              <grouping>
+                <groups/>
+              </grouping>
+              <additional-packageset>
+                <packages/>
+              </additional-packageset>
             </adapter:create-javadocs>
           </else>
         </if>
@@ -267,29 +349,6 @@
       </sequential>
     </macrodef>
 
-  </target>
-
-
-  <target name="taskdef.init" depends="install-ivy">
-    <property name="ivy.logging" value="quiet"/>
-    <ivy:settings file="${basedir}/../ivy-settings.xml" />
-    <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}"/>
-
-    <ivy:cachepath pathid="classpath.ant-tools" conf="ant"/>
-    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
-    <property name="anttools.classpath" refid="classpath.ant-tools"/>
-    <property name="cc.classpath" refid="main.classpath"/>
-    <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="verbose"/>
-    <echo message="Ivy Resolved Classpath for ant - ${anttools.classpath}" level="verbose"/>
-    <!-- yguard obfuscator -->
-    <taskdef name="obfuscate" classname="com.yworks.yguard.YGuardTask" classpathref="classpath.ant-tools" />
-    <!-- antcontrib (if statements) -->
-    <typedef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.ant-tools" />
-    <!-- cobertura -->
-    <taskdef classpathref="classpath.ant-tools" resource="tasks.properties" />
-    <!--
-    <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant-tools"/>
-    -->
   </target>
 
 
