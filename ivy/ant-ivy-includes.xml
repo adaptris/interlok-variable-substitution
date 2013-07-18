@@ -361,7 +361,7 @@
 
   <target name="prepare-for-publish" depends="prepare-ivy, jar, javadoc">
     <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
-      <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}/api"/>
+      <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}"/>
     </zip>
     <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
   </target>
