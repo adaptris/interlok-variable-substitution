@@ -119,6 +119,7 @@
           </rename>
           <externalclasses>
             <path refid="main.classpath"/>
+            <pathelement location="${ant.core.lib}"/>
             <additional-externalclasses/>
           </externalclasses>
         </obfuscate>
