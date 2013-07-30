@@ -1,4 +1,4 @@
-<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cobertura="antlib:net.sourceforge.cobertura.ant">
 
   <target name="init-ivy">
     <property name="ivy.install.version" value="2.3.0"/>
@@ -46,7 +46,7 @@
     <!-- antcontrib (if statements) -->
     <typedef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.ant-tools" />
     <!-- cobertura -->
-    <taskdef classpathref="classpath.ant-tools" resource="tasks.properties" />
+    <typedef resource="net/sourceforge/cobertura/ant/antlib.xml" classpathref="classpath.ant-tools" uri="antlib:net.sourceforge.cobertura.ant"/>
     <!--
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant-tools"/>
     -->
@@ -258,11 +258,11 @@
         <if>
           <isfalse value="${no.cobertura}"/>
           <then>
-            <cobertura-report format="html" destdir="${coverage.report.html.output.dir}" datafile="${coverage.metadata.file}">
+            <cobertura:report format="html" destdir="${coverage.report.html.output.dir}" datafile="${coverage.metadata.file}">
               <fileset dir="${src.dir}">
                 <include name="**/*.java" />
               </fileset>
-            </cobertura-report>
+            </cobertura:report>
           </then>
         </if>
         <junitreport todir="@{basedir}">
@@ -305,12 +305,12 @@
         <mkdir dir="${coverage.build.dir}"/>
         <mkdir dir="${coverage.report.output.dir}"/>
         <mkdir dir="${coverage.report.html.output.dir}"/>
-        <cobertura-instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
+        <cobertura:instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
           <fileset dir="${classes.build.dir}">
             <include name="**/*.class"/>
             <cobertura-exclusions/>
           </fileset>
-        </cobertura-instrument>
+        </cobertura:instrument>
         <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
           <sysproperties>
             <sysproperty key="net.sourceforge.cobertura.datafile" value="${coverage.metadata.file}" />
@@ -325,11 +325,11 @@
             <test-execution-filter/>
           </junit-execution-filter>
         </adapter:execute-junit>
-        <cobertura-report format="xml" destdir="${coverage.report.output.dir}" datafile="${coverage.metadata.file}">
+        <cobertura:report format="xml" destdir="${coverage.report.output.dir}" datafile="${coverage.metadata.file}">
           <fileset dir="${src.dir}">
             <include name="**/*.java" />
           </fileset>
-        </cobertura-report>
+        </cobertura:report>
       </sequential>
     </macrodef>
 
