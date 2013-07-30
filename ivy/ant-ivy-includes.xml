@@ -225,17 +225,25 @@
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
       <element name="coverage-exclusions" optional="true"/>
+      <element name="test-filter" optional="true"/>
       <sequential>
         <if>
           <istrue value="${no.cobertura}"/>
           <then>
-            <adapter:execute-tests-plain printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+            <adapter:execute-tests-plain printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
+              <test-execution-filter>
+                <test-filter/>
+              </test-execution-filter>
+            </adapter:execute-tests-plain>
           </then>
           <else>
             <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
               <cobertura-exclusions>
                 <coverage-exclusions/>
               </cobertura-exclusions>
+              <test-execution-filter>
+                <test-filter/>
+              </test-execution-filter>
             </adapter:execute-tests-cobertura>
           </else>
         </if>
@@ -271,8 +279,14 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
+      <element name="test-execution-filter" optional="true"/>
+
       <sequential>
-        <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}"/>
+        <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
+          <junit-execution-filter>
+            <test-execution-filter/>
+          </junit-execution-filter>
+        </adapter:execute-junit>
       </sequential>
     </macrodef>
 
@@ -282,6 +296,7 @@
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
       <element name="cobertura-exclusions" optional="true"/>
+      <element name="test-execution-filter" optional="true"/>
 
       <sequential>
         <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
@@ -306,6 +321,9 @@
           <appendclasspath>
             <path refid="classpath.ant-tools"/>
           </appendclasspath>
+          <junit-execution-filter>
+            <test-execution-filter/>
+          </junit-execution-filter>
         </adapter:execute-junit>
         <cobertura-report format="xml" destdir="${coverage.report.output.dir}" datafile="${coverage.metadata.file}">
           <fileset dir="${src.dir}">
@@ -323,6 +341,7 @@
       <element name="prependclasspath" optional="true"/>
       <element name="appendclasspath" optional="true"/>
       <element name="sysproperties" optional="true"/>
+      <element name="junit-execution-filter" optional="true"/>
       <sequential>
         <junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}" failureproperty="junit.failed">
           <jvmarg value="-XX:-UseSplitVerifier"/>
@@ -334,8 +353,7 @@
           <batchtest todir="${tests.output.dir}">
             <fileset dir="${testsrc.dir}">
               <include name="${junit.test.classes}"/>
-              <exclude name="${junit.test.exclude.classes}"/>
-              <exclude name="**/AllTests.java"/>
+              <junit-execution-filter/>
             </fileset>
           </batchtest>
           <classpath>
@@ -359,6 +377,13 @@
          big trouble with .dll + .LIC files
     -->
   </target>
+
+
+  <target name="pom2ivy" depends="install-ivy" description="Convert a pom file into an ivy.xml">
+    <ivy:settings file="${basedir}/../ivy-settings.xml" />
+    <ivy:convertpom pomFile="pom.xml" ivyFile="ivy.xml"/>
+  </target>
+
 
   <target name="prepare-for-publish" depends="prepare-ivy, jar, javadoc">
     <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
