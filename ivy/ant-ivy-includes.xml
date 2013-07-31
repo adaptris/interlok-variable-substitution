@@ -8,7 +8,7 @@
     <property name="ivy.download.baseurl" value="http://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
-
+    <property name="ivy.offline.mode" value="false"/>
     <!-- For Running cobertura coverage -->
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
@@ -33,7 +33,7 @@
   <target name="taskdef.init" depends="install-ivy">
     <property name="ivy.logging" value="quiet"/>
     <ivy:settings file="${basedir}/../ivy-settings.xml" />
-    <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}"/>
+    <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
 
     <ivy:cachepath pathid="classpath.ant-tools" conf="ant"/>
     <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
