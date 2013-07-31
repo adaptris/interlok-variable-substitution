@@ -359,9 +359,9 @@
           <classpath>
             <prependclasspath/>
             <path refid="main.classpath"/>
-            <dirset dir="${test.resources.dir}"/>
             <pathelement path="${classes.build.dir}"/>
             <pathelement path="${testclasses.build.dir}"/>
+            <dirset dir="${test.resources.dir}"/>
             <appendclasspath/>
           </classpath>
         </junit>
