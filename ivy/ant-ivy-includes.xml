@@ -30,7 +30,7 @@
 
 
 
-  <target name="taskdef.init" depends="install-ivy">
+  <target name="taskdef.init" depends="init, install-ivy">
     <property name="ivy.logging" value="quiet"/>
     <ivy:settings file="${basedir}/../ivy-settings.xml" />
     <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
@@ -385,9 +385,12 @@
   </target>
 
 
-  <target name="prepare-for-publish" depends="prepare-ivy, jar, javadoc">
+  <target name="prepare-for-publish" depends="test-no-reports, jar, javadoc">
     <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
       <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}"/>
+    </zip>
+    <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
+      <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/"/>
     </zip>
     <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
   </target>
