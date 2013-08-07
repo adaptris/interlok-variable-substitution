@@ -390,7 +390,7 @@
       <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}"/>
     </zip>
     <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
-      <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/"/>
+      <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
     </zip>
     <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
   </target>
