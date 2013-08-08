@@ -387,7 +387,7 @@
 
   <target name="prepare-for-publish" depends="test-no-reports, jar, javadoc">
     <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
-      <zipfileset dir="${api.doc.dir}" prefix="docs/${ant.project.name}"/>
+      <zipfileset dir="${api.doc.dir}" prefix="docs/optional/${ant.project.name}"/>
     </zip>
     <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
       <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
