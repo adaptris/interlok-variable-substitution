@@ -224,7 +224,7 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
-      <element name="coverage-exclusions" optional="true"/>
+      <element name="coverage-filter" optional="true"/>
       <element name="test-filter" optional="true"/>
       <sequential>
         <if>
@@ -238,9 +238,9 @@
           </then>
           <else>
             <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
-              <cobertura-exclusions>
-                <coverage-exclusions/>
-              </cobertura-exclusions>
+              <cobertura-filter>
+                <coverage-filter/>
+              </cobertura-filter>
               <test-execution-filter>
                 <test-filter/>
               </test-execution-filter>
@@ -295,7 +295,7 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
-      <element name="cobertura-exclusions" optional="true"/>
+      <element name="cobertura-filter" optional="true"/>
       <element name="test-execution-filter" optional="true"/>
 
       <sequential>
@@ -308,7 +308,7 @@
         <cobertura:instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
           <fileset dir="${classes.build.dir}">
             <include name="**/*.class"/>
-            <cobertura-exclusions/>
+            <cobertura-filter/>
           </fileset>
         </cobertura:instrument>
         <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
