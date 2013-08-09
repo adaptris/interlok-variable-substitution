@@ -35,11 +35,11 @@
     <ivy:settings file="${basedir}/../ivy-settings.xml" />
     <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
 
-    <ivy:cachepath pathid="classpath.ant-tools" conf="ant"/>
+    <ivy:cachepath pathid="classpath.ant-tools" conf="ant" type="jar,zip,bundle"/>
     <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
     <property name="anttools.classpath" refid="classpath.ant-tools"/>
     <property name="cc.classpath" refid="main.classpath"/>
-    <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="verbose"/>
+    <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="warning"/>
     <echo message="Ivy Resolved Classpath for ant - ${anttools.classpath}" level="verbose"/>
     <!-- yguard obfuscator -->
     <taskdef name="obfuscate" classname="com.yworks.yguard.YGuardTask" classpathref="classpath.ant-tools" />
