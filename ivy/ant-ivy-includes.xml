@@ -158,6 +158,7 @@
           <link offline="false" href="http://mx4j.sourceforge.net/docs/api/"/>
           <link offline="false" href="http://www.slf4j.org/apidocs/"/>
           <link offline="false" href="http://development.adaptris.com/javadocs/v3-snapshot/Interlok-API/"/>
+          <link offline="false" href="http://www.swiftmq.com/products/router/swiftlets/sys_amqp/client/javadoc/"/>
           <!-- current inaccessible for some reason -->
           <!--link offline="false" href="http://activemq.apache.org/maven/5.3.2/activemq-core/apidocs/"/-->
           <!--link offline="false" href="http://javadoc.iaik.tugraz.at/iaik_jce/current/" /-->
