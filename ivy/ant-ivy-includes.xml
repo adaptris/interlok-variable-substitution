@@ -60,7 +60,7 @@
       <attribute name="manifest"/>
       <element name="obfuscate-patternset" optional="true"/>
       <element name="obfuscate-externals" optional="true"/>
-
+      <element name="jar-services" optional="true"/>
       <sequential>
         <var name="tmp.jar" value="${build.dir}/tmp.jar"/>
         <if>
@@ -68,11 +68,13 @@
           <then>
             <jar jarfile="@{jarfile}"  manifest="@{manifest}" >
               <fileset dir="@{basedir}"/>
+              <jar-services/>
             </jar>
           </then>
           <else>
             <jar jarfile="${tmp.jar}"  manifest="@{manifest}" >
               <fileset dir="@{basedir}"/>
+              <jar-services/>
             </jar>
             <adapter:obfuscate input.jar="${tmp.jar}" output.jar="@{jarfile}">
               <patternset-filter>
