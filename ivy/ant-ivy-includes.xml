@@ -392,9 +392,14 @@
     <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
       <zipfileset dir="${api.doc.dir}" prefix="docs/optional/${ant.project.name}"/>
     </zip>
-    <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
-      <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
-    </zip>
+    <if>
+      <available file="${example-xml.build.dir}" type="dir"/>
+      <then>
+        <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
+          <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
+        </zip>
+      </then>
+    </if>
     <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
   </target>
 
