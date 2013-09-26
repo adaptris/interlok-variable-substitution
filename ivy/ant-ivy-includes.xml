@@ -13,7 +13,8 @@
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
-
+    <property environment="env"/>
+    <property name="env.COMPUTERNAME" value="${env.HOSTNAME}"/>
   </target>
 
   <target name="download-ivy" depends="init-ivy" unless="skip.ivy.download">
@@ -53,6 +54,48 @@
   </target>
 
   <target name="macrodef.init" depends="init, install-ivy, taskdef.init">
+
+    <macrodef name="property-source" uri="uri:adapter">
+      <attribute name="file" />
+      <sequential>
+        <echo message="Looking for @{file}.${env.COMPUTERNAME}"/>
+        <if>
+          <available file="@{file}.${env.COMPUTERNAME}" />
+          <then>
+            <echo message="Using @{file}.${env.COMPUTERNAME}"/>
+            <property file="@{file}.${env.COMPUTERNAME}"/>
+          </then>
+          <else>
+            <echo message="Using @{file}"/>
+            <property file="@{file}"/>
+          </else>
+        </if>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="copy-template" uri="uri:adapter">
+      <attribute name="src" />
+      <attribute name="dest"/>
+      <sequential>
+        <if>
+          <not>
+            <available file="@{dest}"/>
+          </not>
+          <then>
+            <if>
+              <available file="@{src}.${env.COMPUTERNAME}" />
+              <then>
+                <copy file="@{src}.${env.COMPUTERNAME}" tofile="@{dest}"/>
+              </then>
+              <else>
+                <copy file="@{src}" tofile="@{dest}"/>
+              </else>
+            </if>
+          </then>
+        </if>
+      </sequential>
+    </macrodef>
+
 
     <macrodef name="create-jar" uri="uri:adapter">
       <attribute name="basedir"/>
