@@ -101,10 +101,16 @@
       <attribute name="basedir"/>
       <attribute name="jarfile"/>
       <attribute name="manifest"/>
+      <attribute name="version" default="${ivy.publish.revision}"/>
+      <attribute name="version-title" default="${manifest.title}"/>
       <element name="obfuscate-patternset" optional="true"/>
       <element name="obfuscate-externals" optional="true"/>
       <element name="jar-services" optional="true"/>
       <sequential>
+        <mkdir dir="@{basedir}/META-INF"/>
+        <propertyfile file="@{basedir}/META-INF/adaptris-version">
+          <entry key="@{version-title}" value="@{version}"/>
+        </propertyfile>
         <var name="tmp.jar" value="${build.dir}/tmp.jar"/>
         <if>
           <istrue value="${no.obfuscation}"/>
