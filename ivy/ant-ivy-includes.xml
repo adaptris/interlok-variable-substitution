@@ -13,6 +13,14 @@
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
+
+    <property name="code-signing.keystore"  value="${build.dir}/signing/code-signing.jks"/>
+    <property name="code-signing.alias" value="code_signer"/>
+    <property name="code-signing.storepass" value="3point142"/>
+    <property name="code-signing.keypass" value="3point142"/>
+    <!-- Default this to false, so that we always sign -->
+    <property name="unsigned.code"          value="false"/>
+
     <property environment="env"/>
     <property name="env.COMPUTERNAME" value="${env.HOSTNAME}"/>
   </target>
@@ -135,6 +143,7 @@
             </adapter:obfuscate>
           </else>
         </if>
+        <adapter:sign-jar jarfile="@{jarfile}"/>
         <var name="tmp.jar" unset="true"/>
       </sequential>
     </macrodef>
@@ -421,6 +430,28 @@
       </sequential>
     </macrodef>
 
+    <macrodef name="sign-jar" uri="uri:adapter">
+      <attribute name="keystore" default="${code-signing.keystore}"/>
+      <attribute name="storepass" default="${code-signing.storepass}"/>
+      <attribute name="keypass" default="${code-signing.keypass}"/>
+      <attribute name="alias"  default="${code-signing.alias}"/>
+      <attribute name="jarfile"/>
+      <sequential>
+        <if>
+          <isfalse value="${unsigned.code}"/>
+          <then>
+            <!-- We could specify the digestalg / sigalg to backwards compatibility as JDK7 only comes with
+                 SHA256 and SHA256withRSA and if we were to deploy on JRE1.6...
+                 e.g. sigalg="MD5withRSA" digestalg="SHA1"
+                 We sign in backwards compatibility mode because of jms-jmx (which could be deployed in a v2).
+            -->
+            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1">
+            </signjar>
+          </then>
+        </if>
+      </sequential>
+    </macrodef>
+
   </target>
 
 
@@ -429,6 +460,8 @@
     <!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
          big trouble with .dll + .LIC files
     -->
+    <mkdir dir="${build.dir}/signing"/>
+    <ivy:retrieve log="${ivy.logging}" pattern="${build.dir}/signing/[artifact].[ext]" conf="signing" type="jks"/>
   </target>
 
 
