@@ -1,4 +1,4 @@
-<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cobertura="antlib:net.sourceforge.cobertura.ant">
+<project basedir="." default="prepare-ivy" name="IvyTasks" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:jacoco="antlib:org.jacoco.ant">
 
   <target name="init-ivy">
     <property name="ivy.install.version" value="2.3.0"/>
@@ -9,10 +9,11 @@
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
-    <!-- For Running cobertura coverage -->
+
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
+    <property name="coverage.metadata.file" value="${basedir}/jacoco.exec"/>
 
     <property name="code-signing.keystore"  value="${build.dir}/signing/code-signing.jks"/>
     <property name="code-signing.alias" value="code_signer"/>
@@ -54,8 +55,8 @@
     <taskdef name="obfuscate" classname="com.yworks.yguard.YGuardTask" classpathref="classpath.ant-tools" />
     <!-- antcontrib (if statements) -->
     <typedef resource="net/sf/antcontrib/antlib.xml" classpathref="classpath.ant-tools" />
-    <!-- cobertura -->
-    <typedef resource="net/sourceforge/cobertura/ant/antlib.xml" classpathref="classpath.ant-tools" uri="antlib:net.sourceforge.cobertura.ant"/>
+    <!-- jacoco coverage -->
+    <typedef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml" classpathref="classpath.ant-tools"/>
     <!--
     <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant-tools"/>
     -->
@@ -286,11 +287,10 @@
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
-      <element name="coverage-filter" optional="true"/>
       <element name="test-filter" optional="true"/>
       <sequential>
         <if>
-          <istrue value="${no.cobertura}"/>
+          <istrue value="${no.coverage}"/>
           <then>
             <adapter:execute-tests-plain printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
               <test-execution-filter>
@@ -299,14 +299,11 @@
             </adapter:execute-tests-plain>
           </then>
           <else>
-            <adapter:execute-tests-cobertura printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
-              <cobertura-filter>
-                <coverage-filter/>
-              </cobertura-filter>
+            <adapter:execute-tests-coverage printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
               <test-execution-filter>
                 <test-filter/>
               </test-execution-filter>
-            </adapter:execute-tests-cobertura>
+            </adapter:execute-tests-coverage>
           </else>
         </if>
       </sequential>
@@ -315,16 +312,32 @@
     <macrodef name="test-reports" uri="uri:adapter">
       <attribute name="basedir"/>
       <attribute name="reportdir"/>
+      <element name="coverage-filter" optional="true"/>
       <sequential>
-        <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
         <if>
-          <isfalse value="${no.cobertura}"/>
+          <isfalse value="${no.coverage}"/>
           <then>
-            <cobertura:report format="html" destdir="${coverage.report.html.output.dir}" datafile="${coverage.metadata.file}">
-              <fileset dir="${src.dir}">
-                <include name="**/*.java" />
-              </fileset>
-            </cobertura:report>
+            <mkdir dir="${coverage.report.output.dir}"/>
+            <mkdir dir="${coverage.report.html.output.dir}"/>
+            <jacoco:report>
+                <executiondata>
+                  <file file="${coverage.metadata.file}"/>
+                </executiondata>
+                <structure name="Code Coverage Report">
+                  <classfiles>
+                    <fileset dir="${classes.build.dir}">
+                      <include name="**/*.class"/>
+                      <coverage-filter/>
+                    </fileset>
+                  </classfiles>
+                  <sourcefiles encoding="UTF-8">
+                    <fileset dir="${src.dir}"/>
+                  </sourcefiles>
+                </structure>
+                <html destdir="${coverage.report.html.output.dir}"/>
+                <csv destfile="${coverage.report.output.dir}/jacoco-report.csv"/>
+                <xml destfile="${coverage.report.output.dir}/jacoco-report.xml"/>
+            </jacoco:report>
           </then>
         </if>
         <junitreport todir="@{basedir}">
@@ -352,46 +365,39 @@
       </sequential>
     </macrodef>
 
-    <macrodef name="execute-tests-cobertura" uri="uri:adapter">
+    <macrodef name="execute-tests-coverage" uri="uri:adapter">
       <attribute name="printsummary" default="true"/>
       <attribute name="fork" default="yes"/>
       <attribute name="showoutput" default="no"/>
       <attribute name="forkmode" default="once"/>
-      <element name="cobertura-filter" optional="true"/>
       <element name="test-execution-filter" optional="true"/>
-
+      <element name="sysproperties" optional="true"/>
+      <element name="extra-classpath" optional="true"/>
       <sequential>
-        <property name="coverage.metadata.file" value="${basedir}/cobertura.ser"/>
         <delete file="${coverage.metadata.file}" />
-        <delete file="${coverage.build.dir}" />
-        <mkdir dir="${coverage.build.dir}"/>
-        <mkdir dir="${coverage.report.output.dir}"/>
-        <mkdir dir="${coverage.report.html.output.dir}"/>
-        <cobertura:instrument todir="${coverage.build.dir}" datafile="${coverage.metadata.file}">
-          <fileset dir="${classes.build.dir}">
-            <include name="**/*.class"/>
-            <cobertura-filter/>
-          </fileset>
-        </cobertura:instrument>
-        <adapter:execute-junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}">
-          <sysproperties>
-            <sysproperty key="net.sourceforge.cobertura.datafile" value="${coverage.metadata.file}" />
-          </sysproperties>
-          <prependclasspath>
-            <pathelement location="${coverage.build.dir}" />
-          </prependclasspath>
-          <appendclasspath>
-            <path refid="classpath.ant-tools"/>
-          </appendclasspath>
-          <junit-execution-filter>
-            <test-execution-filter/>
-          </junit-execution-filter>
-        </adapter:execute-junit>
-        <cobertura:report format="xml" destdir="${coverage.report.output.dir}" datafile="${coverage.metadata.file}">
-          <fileset dir="${src.dir}">
-            <include name="**/*.java" />
-          </fileset>
-        </cobertura:report>
+        <jacoco:coverage  destfile="${coverage.metadata.file}">
+          <junit printsummary="@{printsummary}" fork="@{fork}" forkmode="@{forkmode}" showoutput="@{showoutput}" failureproperty="junit.failed">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
+            <jvmarg value="-XX:+CMSClassUnloadingEnabled"/>
+            <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+            <jvmarg value="-XX:+UseParNewGC"/>
+            <sysproperties/>
+            <formatter type="xml"/>
+            <batchtest todir="${tests.output.dir}">
+              <fileset dir="${testsrc.dir}">
+                <include name="${junit.test.classes}"/>
+                <test-execution-filter/>
+              </fileset>
+            </batchtest>
+            <classpath>
+              <path refid="main.classpath"/>
+              <pathelement path="${classes.build.dir}"/>
+              <pathelement path="${testclasses.build.dir}"/>
+              <dirset dir="${test.resources.dir}"/>
+              <extra-classpath/>
+            </classpath>
+          </junit>
+        </jacoco:coverage>
       </sequential>
     </macrodef>
 
