@@ -224,6 +224,12 @@
           <!-- current inaccessible for some reason -->
           <!--link offline="false" href="http://activemq.apache.org/maven/5.3.2/activemq-core/apidocs/"/-->
           <!--link offline="false" href="http://javadoc.iaik.tugraz.at/iaik_jce/current/" /-->
+          <taglet name="com.adaptris.taglet.ConfigTaglet">
+            <path refid="classpath.ant-tools"/>
+          </taglet>
+          <taglet name="com.adaptris.taglet.LicenseTaglet">
+            <path refid="classpath.ant-tools"/>
+          </taglet>
         </javadoc>
       </sequential>
     </macrodef>
