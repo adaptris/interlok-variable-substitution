@@ -42,7 +42,7 @@
 
   <target name="taskdef.init" depends="init, install-ivy">
     <property name="ivy.logging" value="quiet"/>
-    <ivy:settings file="${basedir}/../ivy-settings.xml" />
+    <ivy:settings file="${basedir}/../resources/ivy-settings.xml" />
     <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
 
     <ivy:cachepath pathid="classpath.ant-tools" conf="ant" type="jar,zip,bundle"/>

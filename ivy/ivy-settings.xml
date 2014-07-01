@@ -23,7 +23,7 @@
     <url name="nexus-releases" m2compatible="true">
       <ivy pattern="${nexus-releases}/[organisation]/[module]/[revision]/ivy-[revision].xml"/>
       <artifact pattern="${nexus-releases}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
-    </url>  
+    </url>
     <chain name="chain-resolver">
       <!--
       <filesystem name="local-maven-repo" m2compatible="true" local="true">
