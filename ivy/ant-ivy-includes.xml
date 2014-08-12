@@ -464,6 +464,19 @@
       </sequential>
     </macrodef>
 
+    <macrodef name="publish-artifact" uri="uri:adapter">
+      <attribute name="resolver"/>
+      <attribute name="ivy-config"/>
+      <attribute name="revision"/>
+      <attribute name="artifact.basedir" default="${project.dist.dir}"/>
+      <sequential>
+        <ivy:resolve file="@{ivy-config}" refresh="true" log="${ivy.logging}"/>
+        <ivy:publish resolver="@{resolver}" revision="@{revision}" overwrite="true" publishivy="true" >
+          <artifacts pattern="@{artifact.basedir}/[module]/[type]/[artifact].[ext]"/>
+        </ivy:publish>
+      </sequential>
+    </macrodef>
+    
   </target>
 
 
@@ -484,25 +497,31 @@
 
 
   <target name="prepare-for-publish" depends="test-no-reports, jar, javadoc">
-    <zip destfile="${project.dist.dir}/${project.name}-javadoc.zip">
+    <mkdir dir="${project.dist.dir}/${project.name}/javadoc"/>
+    <mkdir dir="${project.dist.dir}/${project.name}/examples"/>
+    <mkdir dir="${project.dist.dir}/${project.name}/pom"/>
+    <mkdir dir="${project.dist.dir}/${project.name}/jar"/>
+    <copy todir="${project.dist.dir}/${project.name}/jar" file="${project.dist.dir}/${project.jar.name}"/>
+    
+    <jar jarfile="${project.dist.dir}/${project.name}/javadoc/${project.name}.jar">
+      <fileset dir="${api.doc.dir}"/>
+    </jar>
+    <zip destfile="${project.dist.dir}/${project.name}/javadoc/${project.name}-javadoc.zip">
       <zipfileset dir="${api.doc.dir}" prefix="docs/optional/${ant.project.name}"/>
     </zip>
     <if>
       <available file="${example-xml.build.dir}" type="dir"/>
       <then>
-        <zip destfile="${project.dist.dir}/${project.name}-examples.zip">
+        <zip destfile="${project.dist.dir}/${project.name}/examples/${project.name}-examples.zip">
           <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
         </zip>
       </then>
     </if>
-    <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/pom.xml"/>
+    <ivy:makepom ivyfile="${ivy.xml.file}" pomfile="${project.dist.dir}/${project.name}/pom/${project.name}.pom"/>
   </target>
 
   <target name="publish" depends="prepare-for-publish">
-    <ivy:publish resolver="${ivy.repo}" revision="${ivy.publish.revision}" overwrite="true" publishivy="true">
-      <artifacts pattern="${project.dist.dir}/[artifact].[ext]"/>
-      <artifacts pattern="${project.dist.dir}/pom.xml"/>
-    </ivy:publish>
+    <adapter:publish-artifact resolver="${ivy.repo}" revision="${ivy.publish.revision}" artifact.basedir="${project.dist.dir}" ivy-config="${ivy.xml.file}"/>
   </target>
 
 

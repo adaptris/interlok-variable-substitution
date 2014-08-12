@@ -15,15 +15,17 @@
            However, this has the nasty side-effect in core of downloading the POM file for adp-core-apt
            and sticking that into the classpath.
            So remember to remove it using the type="jar,zip,bundle" when caching the path.
-      -->
     <url name="nexus-snapshots" m2compatible="true" checkmodified="true" changingPattern=".*SNAPSHOT.*">
       <ivy pattern="${nexus-snapshots}/[organisation]/[module]/[revision]/ivy-[revision].xml"/>
       <artifact pattern="${nexus-snapshots}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+      <artifact pattern="${nexus-snapshots}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     </url>
     <url name="nexus-releases" m2compatible="true">
       <ivy pattern="${nexus-releases}/[organisation]/[module]/[revision]/ivy-[revision].xml"/>
       <artifact pattern="${nexus-releases}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+      <artifact pattern="${nexus-releases}/repository/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     </url>
+    -->
     <chain name="chain-resolver">
       <!--
       <filesystem name="local-maven-repo" m2compatible="true" local="true">
@@ -32,10 +34,11 @@
       </filesystem>
       -->
       <!--
-      <ibiblio name="nexus-snapshots" m2compatible="true" root="${nexus-snapshots}"/>
-      -->
       <resolver ref="nexus-releases"/>
       <resolver ref="nexus-snapshots"/>
+      -->
+      <ibiblio name="nexus-snapshots" m2compatible="true" root="${nexus-snapshots}" changingPattern=".*SNAPSHOT.*" checkmodified="true"/>
+      <ibiblio name="nexus-releases" m2compatible="true" root="${nexus-releases}"/>
       <ibiblio name="nexus-public" m2compatible="true" root="${nexus-public}"/>
       <ibiblio name="nexus-private" m2compatible="true" root="${nexus-private}"/>
       <ibiblio name="thirdparty-snapshots" m2compatible="true" root="${thirdparty-snapshots}" changingPattern=".*SNAPSHOT.*" checkmodified="true"/>      
