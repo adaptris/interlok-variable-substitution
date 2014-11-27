@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<adapter>
+	<unique-id>${adapter.id}</unique-id>
+	<channel-list>
+		<channel>
+			<unique-id>${channel.id}</unique-id>
+			<workflow-list>
+				<standard-workflow>
+					<unique-id>${workflow.id1}</unique-id>
+				</standard-workflow>
+				<standard-workflow>
+					<unique-id>${workflow.id2}</unique-id>
+				</standard-workflow>
+			</workflow-list>
+		</channel>
+	</channel-list>
+</adapter>

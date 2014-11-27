@@ -1,0 +1,2 @@
+junit.varsub.variables.adapter.xml=${test.data.dir}/variables-adapter.xml
+junit.varsub.variables.properties=${test.data.dir}/sample-variable-substitutions.properties
