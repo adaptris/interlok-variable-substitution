@@ -150,15 +150,14 @@
     <delete dir="${tests.output.dir}"/>
     <mkdir dir="${tests.output.dir}"/>
     <mkdir dir="${html.tests.output.dir}"/>
-
-    <copy todir="${test.data.dir}" overwrite="true" verbose="true">
-      <fileset dir="${test.resources.dir}/varsub"/>
+  	
+  	<copy todir="${test.data.dir}" overwrite="true" verbose="true">
+      <fileset dir="${test.resources.dir}/var-sub"/>
       <filterset>
         <filter token="TEST_DATA_DIR" value="${test.data.dir}"/>
       </filterset>
     </copy>
-    <replace file="${test.data.dir}/adapter.xml" token="\" value="/"/>
-    <replace file="${test.data.dir}/bad-adapter.xml" token="\" value="/"/>
+    <replace file="${test.data.dir}/variables-adapter.xml" token="\" value="/"/>
   </target>
 
 
