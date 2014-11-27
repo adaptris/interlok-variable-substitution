@@ -37,12 +37,16 @@ public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
   
   private BootstrapProperties config;
   
+  private PropertyFileLoader propertyFileLoader;
+  
   public AdapterRegistry(BootstrapProperties config) throws MalformedObjectNameException {
     super(config);
     
     this.setVariablePrefix(config.getProperty(VARIABLE_PREFIX_KEY) != null ? config.getProperty(VARIABLE_PREFIX_KEY) : DEFAULT_VARIABLE_PREFIX);
     this.setVariablePostfix(config.getProperty(VARIABLE_POSTFIX_KEY) != null ? config.getProperty(VARIABLE_POSTFIX_KEY) : DEFAULT_VARIABLE_POSTFIX);
     this.setConfig(config);
+    
+    propertyFileLoader = new PropertyFileLoader();
   }
   
   @Override
@@ -64,12 +68,12 @@ public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
       log.warn("Configuration variable substitution cannot be run; no properties file specifified in the bootstrap.properties (" + VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY + ")");
       return super.createAdapter(xml);
     } else {
-      URL variableSubPropertiesFileUrl = new URL(variableSubPropertiesFile);
-      Properties varSubs = new Properties();
-      varSubs.load(variableSubPropertiesFileUrl.openConnection().getInputStream());
+      Properties varSubs = getPropertyFileLoader().load(variableSubPropertiesFile);
       
       VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf
           (this.getConfig().getProperty(VARIABLE_SUBSTITUTION_IMPL_KEY) != null ? this.getConfig().getProperty(VARIABLE_SUBSTITUTION_IMPL_KEY) : DEFAULT_VAR_SUB_IMPL);
+      impl.setVariablePostFix(this.getVariablePostfix());
+      impl.setVariablePrefix(this.getVariablePrefix());
       
       return super.createAdapter(impl.doSubstitution(xml, varSubs));
     }
@@ -97,6 +101,14 @@ public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
 
   public void setConfig(BootstrapProperties config) {
     this.config = config;
+  }
+
+  public PropertyFileLoader getPropertyFileLoader() {
+    return propertyFileLoader;
+  }
+
+  public void setPropertyFileLoader(PropertyFileLoader propertyFileLoader) {
+    this.propertyFileLoader = propertyFileLoader;
   }
 
 }
