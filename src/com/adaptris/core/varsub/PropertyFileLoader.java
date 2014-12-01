@@ -7,6 +7,13 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 
+/**
+ * <p>
+ * Will load a properties file from either the String or URL path.
+ * </p>
+ * @author amcgrath
+ *
+ */
 public class PropertyFileLoader {
   
   public Properties load(String url) throws IOException {

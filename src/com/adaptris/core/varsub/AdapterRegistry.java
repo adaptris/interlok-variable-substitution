@@ -16,6 +16,53 @@ import com.adaptris.core.CoreException;
 import com.adaptris.core.management.BootstrapProperties;
 import com.adaptris.util.license.LicenseException;
 
+/**
+ * Custom {@link com.adaptris.core.runtime.AdapterRegistry} implementation that supports variable substitution before configuration is unmarshalled.
+ * <p>
+ * This AdapterRegistry can be activated by the setting the system property
+ * {@value com.adaptris.core.management.AdapterConfigManager#ADAPTER_REGISTRY_IMPL} to be
+ * {@code com.adaptris.core.varsub.AdapterRegistry} and making sure the required jars are available on the classpath.
+ * </p>
+ * <p>
+ * The following properties can be specified in the bootstrap.propertiues to control the behaviour of the variable substitution;
+ * </p>
+ * <p>
+ * <table>
+ * <tr><th>Property</th><th>Default</th><th>Mandatory</th><th>Description</th></tr>
+ * <tr>
+ *   <td>variable-substitution.varprefix</td>
+ *   <td>${</td>
+ *   <td>No</td>
+ *   <td>The value here will be prepended to the variable name to search for in the configuration to be switched out.</td>
+ * </tr>
+ * <tr>
+ *   <td>variable-substitution.varpostfix</td>
+ *   <td>}</td>
+ *   <td>No</td>
+ *   <td>The value here will be appended to the variable name to search for in the configuration to be switched out.</td>
+ * </tr>
+ * <tr>
+ *   <td>variable-substitution.properties.url</td>
+ *   <td>n/a{</td>
+ *   <td>Yes</td>
+ *   <td>The URL to the property file containing the list of substitutions.</td>
+ * </tr>
+ * <tr>
+ *   <td>variable-substitution.impl</td>
+ *   <td>simple</td>
+ *   <td>No</td>
+ *   <td>The substitution engine to that will perform the variable substitution.  At this time there is only one implementation - "simple".</td>
+ * </tr>
+ * </table>
+ * </p>
+ * <p>
+ * The substitution properties file contains a list of substitutions in the form of variableName=Value.   One substitution per line.
+ * </p>
+ * 
+ * @author amcgrath
+ * 
+ */
+
 public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
   
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
