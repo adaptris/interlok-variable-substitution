@@ -43,7 +43,7 @@ import com.adaptris.util.license.LicenseException;
  * </tr>
  * <tr>
  *   <td>variable-substitution.properties.url</td>
- *   <td>n/a{</td>
+ *   <td>n/a</td>
  *   <td>Yes</td>
  *   <td>The URL to the property file containing the list of substitutions.</td>
  * </tr>
