@@ -27,75 +27,89 @@ import com.adaptris.util.license.LicenseException;
  * The following properties can be specified in the bootstrap.propertiues to control the behaviour of the variable substitution;
  * </p>
  * <p>
- * <table>
+ * <table border="1">
  * <tr><th>Property</th><th>Default</th><th>Mandatory</th><th>Description</th></tr>
  * <tr>
  *   <td>variable-substitution.varprefix</td>
- *   <td>${</td>
+ *   <td><strong>${</strong></td>
  *   <td>No</td>
  *   <td>The value here will be prepended to the variable name to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
  *   <td>variable-substitution.varpostfix</td>
- *   <td>}</td>
+ *   <td><strong>}</strong></td>
  *   <td>No</td>
  *   <td>The value here will be appended to the variable name to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
  *   <td>variable-substitution.properties.url</td>
- *   <td>n/a</td>
+ *   <td></td>
  *   <td>Yes</td>
- *   <td>The URL to the property file containing the list of substitutions.</td>
+ *   <td>The URL to the property file containing the list of substitutions; in the form of variableName=Value. One substitution per line.</td>
  * </tr>
  * <tr>
  *   <td>variable-substitution.impl</td>
- *   <td>simple</td>
+ *   <td><strong>simple</strong></td>
  *   <td>No</td>
- *   <td>The substitution engine to that will perform the variable substitution.  At this time there is only one implementation - "simple".</td>
+ *   <td>The substitution engine that will perform the variable substitution.  At this time there is only one implementation - "simple".</td>
  * </tr>
  * </table>
  * </p>
- * <p>
- * The substitution properties file contains a list of substitutions in the form of variableName=Value.   One substitution per line.
+ * For instance if you have in your bootstrap.properties
+ * <pre>
+ * <code>
+ * sysprop.com.adaptris.adapter.registry.impl=com.adaptris.core.varsub.AdapterRegistry
+ * variable-substitution.properties.url=file://localhost//path/to/my/variables
+ * </code>
+ * </pre>
+ * And {@code /path/to/my/variables} contains
+ * <pre>
+ * <code>
+ * broker.url=tcp://localhost:2506
+ * broker.backup.url=tcp://my.host:2507
+ * </code>
+ * </pre>
+ * Then all instances of {@code ${broker.url}} and {@code ${broker.backup.url}} will be replaced within the adapter.xml as it is
+ * read in, but before the Adapter itself is unmarshalled.
  * </p>
- * 
+ *
  * @author amcgrath
- * 
+ *
  */
 
 public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
-  
+
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
-  
+
   private static final String DEFAULT_VARIABLE_PREFIX = "${";
   private static final String DEFAULT_VARIABLE_POSTFIX = "}";
-  
+
   private static final String DEFAULT_VAR_SUB_IMPL = "simple";
-  
+
   private static final String VARIABLE_PREFIX_KEY = "variable-substitution.varprefix";
   private static final String VARIABLE_POSTFIX_KEY = "variable-substitution.varpostfix";
-  
+
   private static final String VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY = "variable-substitution.properties.url";
-  
+
   private static final String VARIABLE_SUBSTITUTION_IMPL_KEY = "variable-substitution.impl";
-  
+
   private String variablePrefix;
   private String variablePostfix;
-  
+
   private BootstrapProperties config;
-  
+
   private PropertyFileLoader propertyFileLoader;
-  
+
   public AdapterRegistry(BootstrapProperties config) throws MalformedObjectNameException {
     super(config);
-    
+
     this.setVariablePrefix(config.getProperty(VARIABLE_PREFIX_KEY) != null ? config.getProperty(VARIABLE_PREFIX_KEY) : DEFAULT_VARIABLE_PREFIX);
     this.setVariablePostfix(config.getProperty(VARIABLE_POSTFIX_KEY) != null ? config.getProperty(VARIABLE_POSTFIX_KEY) : DEFAULT_VARIABLE_POSTFIX);
     this.setConfig(config);
-    
+
     propertyFileLoader = new PropertyFileLoader();
   }
-  
+
   @Override
   public ObjectName createAdapter(URL url) throws IOException, MalformedObjectNameException, CoreException, LicenseException {
     InputStream inputStream = null;
@@ -107,7 +121,7 @@ public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
       IOUtils.closeQuietly(inputStream);
     }
   }
-  
+
   @Override
   public ObjectName createAdapter(String xml) throws IOException, MalformedObjectNameException, CoreException, LicenseException {
     String variableSubPropertiesFile = this.getConfig().getProperty(VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY);
@@ -116,12 +130,12 @@ public class AdapterRegistry extends com.adaptris.core.runtime.AdapterRegistry {
       return super.createAdapter(xml);
     } else {
       Properties varSubs = getPropertyFileLoader().load(variableSubPropertiesFile);
-      
+
       VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf
           (this.getConfig().getProperty(VARIABLE_SUBSTITUTION_IMPL_KEY) != null ? this.getConfig().getProperty(VARIABLE_SUBSTITUTION_IMPL_KEY) : DEFAULT_VAR_SUB_IMPL);
       impl.setVariablePostFix(this.getVariablePostfix());
       impl.setVariablePrefix(this.getVariablePrefix());
-      
+
       return super.createAdapter(impl.doSubstitution(xml, varSubs));
     }
   }

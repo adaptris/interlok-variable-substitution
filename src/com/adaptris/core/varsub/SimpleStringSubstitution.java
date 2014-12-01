@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * Implementation of {@link VariableSubstitution}.
+ * Implementation of {@link VariableSubstitutable}.
  * </p>
  * @author amcgrath
  */
 
 public class SimpleStringSubstitution implements VariableSubstitutable {
-  
+
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Override
@@ -25,7 +25,7 @@ public class SimpleStringSubstitution implements VariableSubstitutable {
       log.trace("Replacing " + variablePrefix + key + variablePostFix + " with " + variableSubs.getProperty((String) key));
       input = input.replace(variablePrefix + key + variablePostFix, variableSubs.getProperty((String) key));
     }
-    
+
     return input;
   }
 

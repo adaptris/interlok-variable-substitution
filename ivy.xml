@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="com.adaptris" module="adp-var-sub" revision="${ivy.publish.revision}" status="release"/>
+  <info organisation="com.adaptris" module="adp-varsub" revision="${ivy.publish.revision}" status="release"/>
 
   <configurations>
     <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -19,9 +19,9 @@
   </configurations>
 
   <publications>
-     <artifact name="adp-var-sub" type="jar" ext="jar"/>
-     <artifact name="adp-var-sub" type="pom" ext="pom"/>
-     <artifact name="adp-var-sub-javadoc" type="javadoc" ext="zip" conf="javadoc"/>
+     <artifact name="adp-varsub" type="jar" ext="jar"/>
+     <artifact name="adp-varsub" type="pom" ext="pom"/>
+     <artifact name="adp-varsub-javadoc" type="javadoc" ext="zip" conf="javadoc"/>
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
   </publications>
 

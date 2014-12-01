@@ -1,4 +1,4 @@
-﻿<project basedir="." default="compile" name="var-sub" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant">
+﻿<project basedir="." default="compile" name="varsub" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property file="build.properties"/>
   <property file="ivy.properties"/>
   <import file="${basedir}/../resources/ant-ivy-includes.xml"/> <!-- Ivy tasks -->
@@ -150,7 +150,7 @@
     <delete dir="${tests.output.dir}"/>
     <mkdir dir="${tests.output.dir}"/>
     <mkdir dir="${html.tests.output.dir}"/>
-  	
+
   	<copy todir="${test.data.dir}" overwrite="true" verbose="true">
       <fileset dir="${test.resources.dir}/var-sub"/>
       <filterset>
