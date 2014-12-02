@@ -17,7 +17,7 @@ import com.adaptris.core.runtime.AbstractConfigurationPreProcessor;
  * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before configuration is unmarshalled.
  * <p>
  * This ConfigurationPreProcessor can be activated by the setting or appending to the system property
- * {@value com.adaptris.core.management.AdapterConfigManager#ADAPTER_REGISTRY_IMPL} to be
+ * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
  * {@code com.adaptris.core.varsub.VariableSubstitutionPreProcessor} and making sure the required jars are available on the classpath.
  * </p>
  * <p>
