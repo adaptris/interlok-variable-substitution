@@ -25,7 +25,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   @Mock
   private PropertyFileLoader propertyFileLoader;
   
-  private VarariableSubstitutionPreProcessor preProcessor;
+  private VariableSubstitutionPreProcessor preProcessor;
   
   private Properties variableSubstitutions;
   
@@ -58,7 +58,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     sampleBootstrapProperties.put("variable-substitution.impl", "simple");
     sampleBootstrapProperties.put("variable-substitution.properties.url", "dummy-url-using-mocks-instead");
     
-    preProcessor = new VarariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
     preProcessor.setPropertyFileLoader(propertyFileLoader);
   }
   
