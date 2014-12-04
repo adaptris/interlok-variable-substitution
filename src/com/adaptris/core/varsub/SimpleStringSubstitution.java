@@ -18,11 +18,12 @@ public class SimpleStringSubstitution implements VariableSubstitutable {
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Override
-  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix) {
+  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix, boolean logSubstitutions) {
     Set<Object> keySet = variableSubs.keySet();
-    log.trace("About to start configuration variable substitution");
+    log.trace("Performing configuration variable substitution");
     for(Object key : keySet) {
-      log.trace("Replacing " + variablePrefix + key + variablePostFix + " with " + variableSubs.getProperty((String) key));
+      if(logSubstitutions)
+        log.trace("Replacing " + variablePrefix + key + variablePostFix + " with " + variableSubs.getProperty((String) key));
       input = input.replace(variablePrefix + key + variablePostFix, variableSubs.getProperty((String) key));
     }
 

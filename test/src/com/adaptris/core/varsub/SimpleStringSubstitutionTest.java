@@ -24,7 +24,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}", true);
     
     assertEquals("The quick brown fox jumps over the lazy dog", substitution);
   }
@@ -33,7 +33,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     Properties props = new Properties();
     props.put("over", "over");
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}", false);
     
     assertEquals("The quick brown ${fox} jumps over the lazy ${dog}", substitution);
   }
@@ -44,7 +44,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "", "");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "", "", true);
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -55,7 +55,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "&[", "]");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "&[", "]", true);
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -63,7 +63,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
   public void testSubstitutionWithoutProperties() throws Exception {
     Properties props = new Properties();
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}", false);
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -74,7 +74,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     
     String multipleMatchesString = "The quick brown ${fox} jumps ${over} the lazy ${fox}";
     
-    String substitution = stringSubstitution.doSubstitution(multipleMatchesString, props, "${", "}");
+    String substitution = stringSubstitution.doSubstitution(multipleMatchesString, props, "${", "}", true);
     
     assertEquals("The quick brown fox jumps ${over} the lazy fox", substitution);
   }
@@ -85,7 +85,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("overxxx", "over");
     props.put("dogxxx", "dog");
     
-    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}");
+    String substitution = stringSubstitution.doSubstitution(testInput, props, "${", "}", false);
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
