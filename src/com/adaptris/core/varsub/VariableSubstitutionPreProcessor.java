@@ -125,7 +125,10 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
       VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl != null ? varSubImpl : DEFAULT_VAR_SUB_IMPL);
       impl.setVariablePostFix(this.getVariablePostfix());
       impl.setVariablePrefix(this.getVariablePrefix());
-      impl.setLogSubstitutions(logVarSubs.equalsIgnoreCase("true") ? true : true);
+      if(logVarSubs != null)
+        impl.setLogSubstitutions(logVarSubs.equalsIgnoreCase("true") ? true : true);
+      else
+        impl.setLogSubstitutions(true);
 
       return impl.doSubstitution(xml, varSubs);
     }
