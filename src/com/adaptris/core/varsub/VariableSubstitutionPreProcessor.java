@@ -84,6 +84,8 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
 
   private static final String VARIABLE_PREFIX_KEY = "variable-substitution.varprefix";
   private static final String VARIABLE_POSTFIX_KEY = "variable-substitution.varpostfix";
+  
+  private static final String VARIABLE_SUBSTITUTION_LOG_VAR_SUBS_KEY = "variable-substitution.log.varsubs";
 
   private static final String VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY = "variable-substitution.properties.url";
 
@@ -118,9 +120,12 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
       }
 
       String varSubImpl = this.getBootstrapProperties().getProperty(VARIABLE_SUBSTITUTION_IMPL_KEY);
+      String logVarSubs = this.getBootstrapProperties().getProperty(VARIABLE_SUBSTITUTION_LOG_VAR_SUBS_KEY);
+      
       VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl != null ? varSubImpl : DEFAULT_VAR_SUB_IMPL);
       impl.setVariablePostFix(this.getVariablePostfix());
       impl.setVariablePrefix(this.getVariablePrefix());
+      impl.setLogSubstitutions(logVarSubs.equalsIgnoreCase("true") ? true : true);
 
       return impl.doSubstitution(xml, varSubs);
     }
