@@ -1,10 +1,9 @@
 /**
- * Custom {@link com.adaptris.core.runtime.AdapterRegistry} implementation that
- * supports variable substitution before configuration is unmarshalled.
+ * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before configuration is un-marshalled.
  * <p>
- * This AdapterRegistry can be activated by the setting the system property
- * {@value com.adaptris.core.management.AdapterConfigManager#ADAPTER_REGISTRY_IMPL} to be
- * {@code com.adaptris.core.varsub.AdapterRegistry} and making sure the required jars are available on the classpath.
+ * This ConfigurationPreProcessor can be activated by the setting or appending to the system property
+ * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
+ * {@code com.adaptris.core.varsub.VariableSubstitutionPreProcessor} and making sure the required jars are available on the classpath.
  * </p>
  * <p>
  * The following properties can be specified in the bootstrap.propertiues to control the behaviour of the variable substitution;
@@ -41,11 +40,11 @@
  * For instance if you have in your bootstrap.properties
  * <pre>
  * <code>
- * sysprop.com.adaptris.adapter.registry.impl=com.adaptris.core.varsub.AdapterRegistry
- * variable-substitution.properties.url=file://localhost//path/to/my/variables
+ * sysprop.com.adaptris.adapter.config.preprocessors=com.adaptris.core.varsub.VariableSubstitutionPreProcessor
+ * variable-substitution.properties.url=.//path/to/my/variables.properties
  * </code>
  * </pre>
- * And {@code /path/to/my/variables} contains
+ * And {@code .//path/to/my/variables.properties} contains
  * <pre>
  * <code>
  * broker.url=tcp://localhost:2506

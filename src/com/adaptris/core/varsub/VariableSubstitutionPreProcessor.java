@@ -14,7 +14,7 @@ import com.adaptris.core.management.BootstrapProperties;
 import com.adaptris.core.runtime.AbstractConfigurationPreProcessor;
 
 /**
- * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before configuration is unmarshalled.
+ * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before configuration is un-marshalled.
  * <p>
  * This ConfigurationPreProcessor can be activated by the setting or appending to the system property
  * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
@@ -55,11 +55,11 @@ import com.adaptris.core.runtime.AbstractConfigurationPreProcessor;
  * For instance if you have in your bootstrap.properties
  * <pre>
  * <code>
- * sysprop.com.adaptris.adapter.registry.impl=com.adaptris.core.varsub.AdapterRegistry
- * variable-substitution.properties.url=file://localhost//path/to/my/variables
+ * sysprop.com.adaptris.adapter.config.preprocessors=com.adaptris.core.varsub.VariableSubstitutionPreProcessor
+ * variable-substitution.properties.url=.//path/to/my/variables.properties
  * </code>
  * </pre>
- * And {@code /path/to/my/variables} contains
+ * And {@code .//path/to/my/variables.properties} contains
  * <pre>
  * <code>
  * broker.url=tcp://localhost:2506
