@@ -456,8 +456,9 @@
                  SHA256 and SHA256withRSA and if we were to deploy on JRE1.6...
                  e.g. sigalg="MD5withRSA" digestalg="SHA1"
                  We sign in backwards compatibility mode because of jms-jmx (which could be deployed in a v2).
+             Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.
             -->
-            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1">
+            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1" tsaurl="http://tsa.starfieldtech.com">
             </signjar>
           </then>
         </if>
