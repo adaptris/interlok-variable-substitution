@@ -476,7 +476,25 @@
         </ivy:publish>
       </sequential>
     </macrodef>
-    
+
+    <macrodef name="create-manifest" uri="uri:adapter">
+      <attribute name="file" default="${build.dir}/Manifest.mf"/>
+      <attribute name="title"/>
+      <attribute name="vendor" default="Adaptris Ltd"/>
+      <attribute name="vendorId" default="com.adaptris"/>
+      <attribute name="version" default="${ivy.publish.revision}"/>
+      <sequential>
+        <manifest file="${build.dir}/Manifest.mf">
+          <attribute name="Manifest-Version" value="1.0"/>
+          <attribute name="Build-Version" value="@{version}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Implementation-Vendor-Id" value="@{vendorId}"/>
+          <attribute name="Implementation-Version" value="@{version}"/>
+          <attribute name="Implementation-Title" value="@{title}"/>
+          <attribute name="Implementation-Vendor" value="@{vendor}"/>
+        </manifest>
+      </sequential>
+    </macrodef>
   </target>
 
 
@@ -502,7 +520,7 @@
     <mkdir dir="${project.dist.dir}/${project.name}/pom"/>
     <mkdir dir="${project.dist.dir}/${project.name}/jar"/>
     <copy todir="${project.dist.dir}/${project.name}/jar" file="${project.dist.dir}/${project.jar.name}"/>
-    
+
     <jar jarfile="${project.dist.dir}/${project.name}/javadoc/${project.name}.jar">
       <fileset dir="${api.doc.dir}"/>
     </jar>
