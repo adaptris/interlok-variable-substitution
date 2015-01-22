@@ -10,23 +10,26 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Implementation of {@link VariableSubstitutable}.
  * </p>
+ * 
  * @author amcgrath
  */
 
-public class SimpleStringSubstitution implements VariableSubstitutable {
+class SimpleStringSubstitution implements VariableSubstitutable {
 
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
+  private transient Logger log = LoggerFactory.getLogger("VariableSubstitution");
 
   @Override
-  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix, boolean logSubstitutions) {
-    Set<Object> keySet = variableSubs.keySet();
+  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix,
+                               boolean logSubstitutions) {
+    Set<String> keySet = variableSubs.stringPropertyNames();
     log.trace("Performing configuration variable substitution");
-    for(Object key : keySet) {
-      if(logSubstitutions)
-        log.trace("Replacing " + variablePrefix + key + variablePostFix + " with " + variableSubs.getProperty((String) key));
-      input = input.replace(variablePrefix + key + variablePostFix, variableSubs.getProperty((String) key));
+    for (String key : keySet) {
+      String variable = variablePrefix + key + variablePostFix;
+      if (logSubstitutions) {
+        log.trace("Replacing {} with {}", variable, variableSubs.getProperty(key));
+      }
+      input = input.replace(variable, variableSubs.getProperty(key));
     }
-
     return input;
   }
 

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -49,6 +50,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     variableSubstitutions = new Properties();
     variableSubstitutions.put("adapter.id", "MyAdapterID");
     variableSubstitutions.put("channel.id", "MyChannelID");
+    variableSubstitutions.put("channel.alternate.id", "AnotherChannelId");
     variableSubstitutions.put("workflow.id1", "MyWorkflowID1");
     variableSubstitutions.put("workflow.id2", "MyWorkflowID2");
     
@@ -69,12 +71,19 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
-    assertEquals("MyAdapterID", adapter.getUniqueId());
-    assertEquals("MyChannelID", adapter.getChannelList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID1", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+    doStandardAssertions(adapter);
   }
   
+  public void testSimpleVarSubAdapterRegistry_String() throws Exception {
+    // We don't actually want to go to the file system for the variable substitutions
+    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+
+    String xml = preProcessor.process(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+    Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
+
+    doStandardAssertions(adapter);
+  }
+
   public void testSimpleVarSubAdapterRegistryWithProperPropertiesFile() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
@@ -86,10 +95,8 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
-    assertEquals("MyAdapterID", adapter.getUniqueId());
-    assertEquals("MyChannelID", adapter.getChannelList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID1", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+    doStandardAssertions(adapter);
+
   }
   
   public void testSimpleVarSubAdapterRegistryNoPropertyURL() throws Exception {
@@ -119,10 +126,8 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
-    assertEquals("MyAdapterID", adapter.getUniqueId());
-    assertEquals("MyChannelID", adapter.getChannelList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID1", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+    doStandardAssertions(adapter);
+
   }
   
   public void testSimpleVarSubAdapterRegistryNoPostfix() throws Exception {
@@ -136,10 +141,8 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
-    assertEquals("MyAdapterID", adapter.getUniqueId());
-    assertEquals("MyChannelID", adapter.getChannelList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID1", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
-    assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+    doStandardAssertions(adapter);
+
   }
   
   public void testSimpleVarSubAdapterRegistryOnly1Match() throws Exception {
@@ -157,5 +160,15 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals("${channel.id}", adapter.getChannelList().get(0).getUniqueId());
     assertEquals("${workflow.id1}", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+  }
+
+  private void doStandardAssertions(Adapter adapter) {
+    assertEquals("MyAdapterID", adapter.getUniqueId());
+    assertEquals("MyChannelID", adapter.getChannelList().get(0).getUniqueId());
+    assertEquals("AnotherChannelId", adapter.getChannelList().get(1).getUniqueId());
+    assertEquals("MyWorkflowID1", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
+    assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+    assertEquals("MyWorkflowID1", adapter.getChannelList().get(1).getWorkflowList().get(0).getUniqueId());
+    assertEquals("MyWorkflowID2", adapter.getChannelList().get(1).getWorkflowList().get(1).getUniqueId());
   }
 }

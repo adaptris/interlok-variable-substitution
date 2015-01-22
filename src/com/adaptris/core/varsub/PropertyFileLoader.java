@@ -17,7 +17,7 @@ import com.adaptris.util.URLString;
  * @author amcgrath
  *
  */
-public class PropertyFileLoader {
+class PropertyFileLoader {
   
   public Properties load(String url) throws IOException {
     return load(new URLString(url));
