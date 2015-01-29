@@ -17,6 +17,7 @@
 
     <property name="testsrc.dir" value="${basedir}/test/src"/>
     <property name="build.dir" value="${basedir}/build"/>
+  	<property name="resources.dir" value="${basedir}/resources"/>
     <property name="test.resources.dir" value="${basedir}/test/resources"/>
     <property name="test.data.dir" value="${build.dir}/testdata"/>
     <property name="doc.dir"                value="${basedir}/docs"/>
@@ -73,6 +74,11 @@
   </target>
 
   <target name="compile" depends="prepare" description="Compile">
+  	<!-- copy the config files to the build dir -->
+    <copy todir="${classes.build.dir}">
+      <fileset dir="${resources.dir}"/>
+    </copy>
+
     <javac source="${javac.target.version}" target="${javac.target.version}" destdir="${classes.build.dir}" srcdir="${src.dir}" debug="on" debuglevel="source,lines,vars">
       <classpath refid="main.classpath"/>
     </javac>
