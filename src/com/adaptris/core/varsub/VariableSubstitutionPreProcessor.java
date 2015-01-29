@@ -18,9 +18,9 @@ import com.adaptris.core.util.ExceptionHelper;
  * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before
  * configuration is un-marshalled.
  * <p>
- * This ConfigurationPreProcessor can be activated by the setting or appending to the system property
+ * This ConfigurationPreProcessor can be activated by the setting or appending to the bootstrap property
  * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
- * {@code com.adaptris.core.varsub.VariableSubstitutionPreProcessor} and making sure the required jars are available on the
+ * <strong>variableSubstitution</strong> and making sure the required jars are available on the
  * classpath.
  * </p>
  * <p>
@@ -66,7 +66,7 @@ import com.adaptris.core.util.ExceptionHelper;
  * 
  * <pre>
  * <code>
- * sysprop.com.adaptris.adapter.config.preprocessors=com.adaptris.core.varsub.VariableSubstitutionPreProcessor
+ * preProcessors=variableSubstitution
  * variable-substitution.properties.url=file://localhost//path/to/my/variables
  * </code>
  * </pre>
