@@ -1,0 +1,2 @@
+name=variableSubstitution
+class=com.adaptris.core.varsub.VariableSubstitutionPreProcessor
