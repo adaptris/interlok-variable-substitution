@@ -111,7 +111,7 @@
       <attribute name="jarfile"/>
       <attribute name="manifest"/>
       <attribute name="version" default="${ivy.publish.revision}"/>
-      <attribute name="version-title" default="${manifest.title}"/>
+      <attribute name="version-title"/>
       <element name="obfuscate-patternset" optional="true"/>
       <element name="obfuscate-externals" optional="true"/>
       <element name="jar-services" optional="true"/>
