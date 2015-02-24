@@ -21,7 +21,9 @@
     <property name="code-signing.keypass" value="3point142"/>
     <!-- Default this to false, so that we always sign -->
     <property name="unsigned.code"          value="false"/>
-
+    <tstamp>
+      <format property="build.date" pattern="yyyy-MM-dd" locale="en"/>
+    </tstamp>
     <property environment="env"/>
     <property name="env.COMPUTERNAME" value="${env.HOSTNAME}"/>
   </target>
@@ -118,7 +120,9 @@
       <sequential>
         <mkdir dir="@{basedir}/META-INF"/>
         <propertyfile file="@{basedir}/META-INF/adaptris-version">
-          <entry key="@{version-title}" value="@{version}"/>
+          <entry key="component.name" value="@{version-title}"/>
+          <entry key="build.version" value="@{version}"/>
+          <entry key="build.date" value="${build.date}"/>
         </propertyfile>
         <var name="tmp.jar" value="${build.dir}/tmp.jar"/>
         <if>
