@@ -10,6 +10,8 @@
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
 
+    <!-- Default publish type is "JAR" -->
+    <property name="ivy.publish.bundle.type" value="jar"/>
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
@@ -48,7 +50,7 @@
     <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
 
     <ivy:cachepath pathid="classpath.ant-tools" conf="ant" type="jar,zip,bundle"/>
-    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle"/>
+    <ivy:cachepath pathid="main.classpath" conf="compile,runtime,test" type="jar,zip,bundle,hk2-jar"/>
     <property name="anttools.classpath" refid="classpath.ant-tools"/>
     <property name="cc.classpath" refid="main.classpath"/>
     <echo message="Ivy Resolved Classpath - ${cc.classpath}" level="verbose"/>
@@ -520,21 +522,36 @@
 
 
   <target name="prepare-for-publish" depends="test-no-reports, jar, javadoc">
-    <mkdir dir="${project.dist.dir}/${project.name}/javadoc"/>
-    <mkdir dir="${project.dist.dir}/${project.name}/examples"/>
     <mkdir dir="${project.dist.dir}/${project.name}/pom"/>
-    <mkdir dir="${project.dist.dir}/${project.name}/jar"/>
-    <copy todir="${project.dist.dir}/${project.name}/jar" file="${project.dist.dir}/${project.jar.name}"/>
 
-    <jar jarfile="${project.dist.dir}/${project.name}/javadoc/${project.name}.jar">
-      <fileset dir="${api.doc.dir}"/>
-    </jar>
-    <zip destfile="${project.dist.dir}/${project.name}/javadoc/${project.name}-javadoc.zip">
-      <zipfileset dir="${api.doc.dir}" prefix="docs/optional/${ant.project.name}"/>
-    </zip>
+    <!-- Stick a shim in here to support WAR files -->
+    <if>
+      <equals arg1="war" arg2="${ivy.publish.bundle.type}"/>
+      <then>
+        <mkdir dir="${project.dist.dir}/${project.name}/war"/>
+        <copy todir="${project.dist.dir}/${project.name}/war" file="${project.dist.dir}/${project.war.name}"/>
+      </then>
+      <else>
+        <mkdir dir="${project.dist.dir}/${project.name}/jar"/>
+        <copy todir="${project.dist.dir}/${project.name}/jar" file="${project.dist.dir}/${project.jar.name}"/>
+      </else>
+    </if>
+    <if>
+      <available file="${api.doc.dir}" type="dir"/>
+      <then>
+        <mkdir dir="${project.dist.dir}/${project.name}/javadoc"/>
+        <jar jarfile="${project.dist.dir}/${project.name}/javadoc/${project.name}.jar">
+          <fileset dir="${api.doc.dir}"/>
+        </jar>
+        <zip destfile="${project.dist.dir}/${project.name}/javadoc/${project.name}-javadoc.zip">
+          <zipfileset dir="${api.doc.dir}" prefix="docs/optional/${ant.project.name}"/>
+        </zip>
+      </then>
+    </if>
     <if>
       <available file="${example-xml.build.dir}" type="dir"/>
       <then>
+        <mkdir dir="${project.dist.dir}/${project.name}/examples"/>
         <zip destfile="${project.dist.dir}/${project.name}/examples/${project.name}-examples.zip">
           <zipfileset dir="${example-xml.build.dir}" prefix="example-xml/optional/${ant.project.name}"/>
         </zip>
