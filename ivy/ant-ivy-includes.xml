@@ -531,10 +531,20 @@
         <mkdir dir="${project.dist.dir}/${project.name}/war"/>
         <copy todir="${project.dist.dir}/${project.name}/war" file="${project.dist.dir}/${project.war.name}"/>
       </then>
-      <else>
+    </if>
+    <if>
+      <equals arg1="zip" arg2="${ivy.publish.bundle.type}"/>
+      <then>
+        <mkdir dir="${project.dist.dir}/${project.name}/zip"/>
+        <copy todir="${project.dist.dir}/${project.name}/zip" file="${project.dist.dir}/${project.zip.name}"/>
+      </then>
+    </if>
+    <if>
+      <equals arg1="jar" arg2="${ivy.publish.bundle.type}"/>
+      <then>
         <mkdir dir="${project.dist.dir}/${project.name}/jar"/>
         <copy todir="${project.dist.dir}/${project.name}/jar" file="${project.dist.dir}/${project.jar.name}"/>
-      </else>
+      </then>
     </if>
     <if>
       <available file="${api.doc.dir}" type="dir"/>
