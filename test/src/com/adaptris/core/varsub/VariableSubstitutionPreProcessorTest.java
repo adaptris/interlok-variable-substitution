@@ -117,6 +117,27 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
 
+  public void testSimpleVarSubAdapterRegistry_ProperPropertiesFile_UnresolvableNestedVariables() throws Exception {
+    Properties myVarSubs = new Properties();
+    myVarSubs.put("Channel", "Channel");
+    myVarSubs.put("adapter.id", "${my.adapter}ID");
+    myVarSubs.put("channel.id", "My${Channel}ID");
+    myVarSubs.put("channel.alternate.id", "Another${Channel}Id");
+    myVarSubs.put("workflow.id1", "${my.workflow}ID1");
+    myVarSubs.put("workflow.id2", "${my.workflow}ID2");
+    myVarSubs.put("my.workflow", "MyWorkflow");
+
+    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+
+    sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
+
+    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+
+    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
+    assertEquals("${my.adapter}ID", adapter.getUniqueId());
+  }
+
   public void testSimpleVarSubAdapterRegistryNoPropertyURL() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
