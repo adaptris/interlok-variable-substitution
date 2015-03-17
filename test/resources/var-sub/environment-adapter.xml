@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<adapter>
+	<unique-id>adapterUniqueId</unique-id>
+	<channel-list>
+		<channel>
+			<unique-id>channel1</unique-id>
+			<workflow-list>
+				<standard-workflow>
+					<unique-id>${PATH}</unique-id>
+				</standard-workflow>
+				<standard-workflow>
+					<unique-id>workflow2</unique-id>
+				</standard-workflow>
+			</workflow-list>
+		</channel>
+		<channel>
+			<unique-id>channel2</unique-id>
+			<workflow-list>
+				<standard-workflow>
+					<unique-id>${PATH}</unique-id>
+				</standard-workflow>
+				<standard-workflow>
+					<unique-id>workflow2</unique-id>
+				</standard-workflow>
+			</workflow-list>
+		</channel>
+	</channel-list>
+</adapter>
