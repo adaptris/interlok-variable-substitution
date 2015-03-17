@@ -27,9 +27,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   private PropertyFileLoader propertyFileLoader;
   
   private VariableSubstitutionPreProcessor preProcessor;
-  
-  private Properties variableSubstitutions;
-  
+
   private Properties sampleBootstrapProperties;
   
   public VariableSubstitutionPreProcessorTest(String name) {
@@ -46,14 +44,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     MockitoAnnotations.initMocks(this);
     
     variablesAdapterFile = new File(PROPERTIES.getProperty(PROPS_VARIABLES_ADAPTER));
-    
-    variableSubstitutions = new Properties();
-    variableSubstitutions.put("adapter.id", "MyAdapterID");
-    variableSubstitutions.put("channel.id", "MyChannelID");
-    variableSubstitutions.put("channel.alternate.id", "AnotherChannelId");
-    variableSubstitutions.put("workflow.id1", "MyWorkflowID1");
-    variableSubstitutions.put("workflow.id2", "MyWorkflowID2");
-    
+
     sampleBootstrapProperties = new Properties();
     sampleBootstrapProperties.put("variable-substitution.varprefix", "${");
     sampleBootstrapProperties.put("variable-substitution.varpostfix", "}");
@@ -66,6 +57,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   
   public void testSimpleVarSubAdapterRegistry() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
@@ -76,6 +68,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   
   public void testSimpleVarSubAdapterRegistry_String() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
 
     String xml = preProcessor.process(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
@@ -86,6 +79,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   public void testSimpleVarSubAdapterRegistryWithProperPropertiesFile() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
     
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
@@ -99,8 +93,33 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  public void testSimpleVarSubAdapterRegistry_ProperPropertiesFile_NestedVariables() throws Exception {
+    Properties myVarSubs = new Properties();
+    myVarSubs.put("my.adapter", "MyAdapter");
+    myVarSubs.put("Channel", "Channel");
+    myVarSubs.put("adapter.id", "${my.adapter}ID");
+    myVarSubs.put("channel.id", "My${Channel}ID");
+    myVarSubs.put("channel.alternate.id", "Another${Channel}Id");
+    myVarSubs.put("workflow.id1", "${my.workflow}ID1");
+    myVarSubs.put("workflow.id2", "${my.workflow}ID2");
+    myVarSubs.put("my.workflow", "MyWorkflow");
+
+    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+
+    sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
+
+    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+
+    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
+
+    doStandardAssertions(adapter);
+
+  }
+
   public void testSimpleVarSubAdapterRegistryNoPropertyURL() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
     
     // Remove the property - no substitution should take place.
@@ -117,6 +136,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   
   public void testSimpleVarSubAdapterRegistryNoPrefix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
     
     // Remove the property - should use the default, which happens to be the same anyway....
@@ -132,6 +152,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   
   public void testSimpleVarSubAdapterRegistryNoPostfix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
     
     // Remove the property - should use the default, which happens to be the same anyway....
@@ -146,6 +167,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   }
   
   public void testSimpleVarSubAdapterRegistryOnly1Match() throws Exception {
+    Properties variableSubstitutions = createProperties();
     variableSubstitutions.remove("adapter.id");
     variableSubstitutions.remove("channel.id");
     variableSubstitutions.remove("workflow.id1");
@@ -170,5 +192,15 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
     assertEquals("MyWorkflowID1", adapter.getChannelList().get(1).getWorkflowList().get(0).getUniqueId());
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(1).getWorkflowList().get(1).getUniqueId());
+  }
+
+  private Properties createProperties() {
+    Properties subs = new Properties();
+    subs.put("adapter.id", "MyAdapterID");
+    subs.put("channel.id", "MyChannelID");
+    subs.put("channel.alternate.id", "AnotherChannelId");
+    subs.put("workflow.id1", "MyWorkflowID1");
+    subs.put("workflow.id2", "MyWorkflowID2");
+    return subs;
   }
 }

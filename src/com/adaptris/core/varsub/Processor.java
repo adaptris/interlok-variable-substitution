@@ -33,8 +33,10 @@ class Processor {
     String variablePrefix = defaultIfBlank(cfg.getProperty(VARIABLE_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(VARIABLE_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
     boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(VARIABLE_SUBSTITUTION_LOG_VAR_SUBS_KEY), "false"));
+    Properties expandedVariables = new VariableExpander(variablePrefix, variablePostfix).resolve(variables);
+
     VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
-    return impl.create().doSubstitution(xml, variables, variablePrefix, variablePostfix, logIt);
+    return impl.create().doSubstitution(xml, expandedVariables, variablePrefix, variablePostfix, logIt);
   }
 
   String process(URL urlToXml, Properties variables) throws CoreException {
