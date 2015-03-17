@@ -51,8 +51,12 @@ class VariableExpander {
   Properties resolve(Properties input) {
     Properties result = new Properties();
     Properties sysProps = System.getProperties();
+    Properties environment = PropertyFileLoader.getEnvironment();
+
     Set<String> variables = createVariableNames(input);
     Set<String> sysPropVariables = createVariableNames(sysProps);
+    Set<String> environmentVariables = createVariableNames(environment);
+
     for (String key : input.stringPropertyNames()) {
       String value = input.getProperty(key);
       // Loop through and sort out all the defined variables first.
@@ -62,6 +66,11 @@ class VariableExpander {
       // Now loop through and expand any system properties.
       while (containsVariable(value, sysPropVariables)) {
         value = expand(value, sysProps);
+      }
+
+      // Now loop through and expand any environment variables.
+      while (containsVariable(value, environmentVariables)) {
+        value = expand(value, environment);
       }
       result.setProperty(key, value);
     }

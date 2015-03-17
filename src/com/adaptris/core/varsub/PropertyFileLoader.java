@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.Properties;
 
 import com.adaptris.util.URLString;
@@ -62,4 +63,12 @@ class PropertyFileLoader {
     return in;
   }
 
+  public static Properties getEnvironment() {
+    Properties result = new Properties();
+    Map<String, String> env = System.getenv();
+    for (String envName : env.keySet()) {
+      result.put(envName, env.get(envName));
+    }
+    return result;
+  }
 }
