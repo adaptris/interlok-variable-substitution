@@ -3,10 +3,10 @@ package com.adaptris.core.varsub;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VAR_SUB_IMPL;
-import static com.adaptris.core.varsub.Constants.ENVVAR_LOG_SUBS_KEY;
+import static com.adaptris.core.varsub.Constants.ENVVAR_ADDITIONAL_LOGGING;
 import static com.adaptris.core.varsub.Constants.ENVVAR_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.ENVVAR_PREFIX_KEY;
-import static com.adaptris.core.varsub.Constants.ENVVAR_SUBSTITUTION_IMPL_KEY;
+import static com.adaptris.core.varsub.Constants.ENVVAR_IMPL_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.io.IOException;
@@ -44,22 +44,29 @@ import com.adaptris.core.util.ExceptionHelper;
  * <th>Description</th>
  * </tr>
  * <tr>
- * <td>environment-variables.varprefix</td>
- * <td><strong>${</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_PREFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_PREFIX}</strong></td>
  * <td>No</td>
  * <td>The value here will be prepended to the system property to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>environment-variables.varpostfix</td>
- * <td><strong>}</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_POSTFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_POSTFIX}</strong></td>
  * <td>No</td>
  * <td>The value here will be appended to the system property to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>environment-variables.impl</td>
- * <td><strong>simple</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_IMPL_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the system property. At this time there is only one implementation - "simple".</td>
+ * <td>The substitution engine that will perform the system property. At this time there is only one implementation -
+ * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
+ * </tr>
+ * <tr>
+ * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_ADDITIONAL_LOGGING}</td>
+ * <td><strong>false</strong></td>
+ * <td>No</td>
+ * <td>Controls additional logging.</td>
  * </tr>
  * </table>
  * </p>
@@ -112,10 +119,10 @@ public class EnvironmentVariablesPreProcessor extends AbstractConfigurationPrePr
 
   String expand(String xml) throws CoreException {
     Properties cfg = getBootstrapProperties();
-    String varSubImpl = defaultIfBlank(cfg.getProperty(ENVVAR_SUBSTITUTION_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
+    String varSubImpl = defaultIfBlank(cfg.getProperty(ENVVAR_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(ENVVAR_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(ENVVAR_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(ENVVAR_LOG_SUBS_KEY), "false"));
+    boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(ENVVAR_ADDITIONAL_LOGGING), "false"));
 
     VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, PropertyFileLoader.getEnvironment(), variablePrefix, variablePostfix, logIt);

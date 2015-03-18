@@ -2,10 +2,10 @@ package com.adaptris.core.varsub;
 
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
-import static com.adaptris.core.varsub.Constants.VARIABLE_POSTFIX_KEY;
-import static com.adaptris.core.varsub.Constants.VARIABLE_PREFIX_KEY;
-import static com.adaptris.core.varsub.Constants.VARIABLE_SUBSTITUTION_IMPL_KEY;
-import static com.adaptris.core.varsub.Constants.VARIABLE_SUBSTITUTION_LOG_VAR_SUBS_KEY;
+import static com.adaptris.core.varsub.Constants.VARSUB_ADDITIONAL_LOGGING;
+import static com.adaptris.core.varsub.Constants.VARSUB_IMPL_KEY;
+import static com.adaptris.core.varsub.Constants.VARSUB_POSTFIX_KEY;
+import static com.adaptris.core.varsub.Constants.VARSUB_PREFIX_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.io.File;
@@ -167,10 +167,10 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   private Properties configAsProperties() {
     Properties config = new Properties();
-    config.setProperty(VARIABLE_PREFIX_KEY, variablePrefix());
-    config.setProperty(VARIABLE_POSTFIX_KEY, variableSuffix());
-    config.setProperty(VARIABLE_SUBSTITUTION_LOG_VAR_SUBS_KEY, String.valueOf(logSubstitutions()));
-    config.setProperty(VARIABLE_SUBSTITUTION_IMPL_KEY, substitutionImpl());
+    config.setProperty(VARSUB_PREFIX_KEY, variablePrefix());
+    config.setProperty(VARSUB_POSTFIX_KEY, variableSuffix());
+    config.setProperty(VARSUB_ADDITIONAL_LOGGING, String.valueOf(logSubstitutions()));
+    config.setProperty(VARSUB_IMPL_KEY, substitutionImpl());
     return config;
   }
 
@@ -245,8 +245,8 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   /**
    * Set the Substitution Type.
    * 
-   * @param type the type, if not specified then 'simple'. No other types are supported currently.
-   * @see VariableSubstitutionImplFactory
+   * @param type the type, if not specified then {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL} . No other types
+   *          are supported currently.
    */
   public void setSubstitutionType(String type) {
     this.substitutionType = type;

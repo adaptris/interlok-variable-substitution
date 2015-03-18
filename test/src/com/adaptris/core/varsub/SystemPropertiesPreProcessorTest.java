@@ -32,7 +32,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
     bootstrapProperties = new Properties();
     bootstrapProperties.put(Constants.SYSPROP_PREFIX_KEY, Constants.DEFAULT_VARIABLE_PREFIX);
     bootstrapProperties.put(Constants.SYSPROP_POSTFIX_KEY, Constants.DEFAULT_VARIABLE_POSTFIX);
-    bootstrapProperties.put(Constants.SYSPROP_SUBSTITUTION_IMPL_KEY, VariableSubstitutionImplFactory.simple.name());
+    bootstrapProperties.put(Constants.SYSPROP_IMPL_KEY, VariableSubstitutionImplFactory.simple.name());
     
     preProcessor = new SystemPropertiesPreProcessor(new JunitBootstrapProperties(bootstrapProperties));
   }

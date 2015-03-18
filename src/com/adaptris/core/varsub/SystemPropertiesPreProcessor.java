@@ -3,10 +3,10 @@ package com.adaptris.core.varsub;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VAR_SUB_IMPL;
-import static com.adaptris.core.varsub.Constants.SYSPROP_LOG_VAR_SUBS_KEY;
+import static com.adaptris.core.varsub.Constants.SYSPROP_ADDITIONAL_LOGGING;
 import static com.adaptris.core.varsub.Constants.SYSPROP_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.SYSPROP_PREFIX_KEY;
-import static com.adaptris.core.varsub.Constants.SYSPROP_SUBSTITUTION_IMPL_KEY;
+import static com.adaptris.core.varsub.Constants.SYSPROP_IMPL_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.io.IOException;
@@ -44,22 +44,29 @@ import com.adaptris.core.util.ExceptionHelper;
  * <th>Description</th>
  * </tr>
  * <tr>
- * <td>system-properties.varprefix</td>
- * <td><strong>${</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#SYSPROP_PREFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_PREFIX} </strong></td>
  * <td>No</td>
  * <td>The value here will be prepended to the system property to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>system-properties.varpostfix</td>
- * <td><strong>}</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#SYSPROP_POSTFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_POSTFIX} </strong></td>
  * <td>No</td>
  * <td>The value here will be appended to the system property to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>system-properties.impl</td>
- * <td><strong>simple</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#SYSPROP_IMPL_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the system property. At this time there is only one implementation - "simple".</td>
+ * <td>The substitution engine that will perform the system property. At this time there is only one implementation -
+ * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
+ * </tr>
+ * <tr>
+ * <td>{@value com.adaptris.core.varsub.Constants#SYSPROP_ADDITIONAL_LOGGING}</td>
+ * <td><strong>false</strong></td>
+ * <td>No</td>
+ * <td>Controls additional logging.</td>
  * </tr>
  * </table>
  * </p>
@@ -108,13 +115,12 @@ public class SystemPropertiesPreProcessor extends AbstractConfigurationPreProces
     return result;
   }
 
-
   String expand(String xml) throws CoreException {
     Properties cfg = getBootstrapProperties();
-    String varSubImpl = defaultIfBlank(cfg.getProperty(SYSPROP_SUBSTITUTION_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
+    String varSubImpl = defaultIfBlank(cfg.getProperty(SYSPROP_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(SYSPROP_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(SYSPROP_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(SYSPROP_LOG_VAR_SUBS_KEY), "false"));
+    boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(SYSPROP_ADDITIONAL_LOGGING), "false"));
 
     VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, System.getProperties(), variablePrefix, variablePostfix, logIt);

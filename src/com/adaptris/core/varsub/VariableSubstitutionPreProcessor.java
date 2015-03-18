@@ -1,6 +1,6 @@
 package com.adaptris.core.varsub;
 
-import static com.adaptris.core.varsub.Constants.VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY;
+import static com.adaptris.core.varsub.Constants.VARSUB_PROPERTIES_URL_KEY;
 
 import java.io.IOException;
 import java.net.URL;
@@ -20,8 +20,7 @@ import com.adaptris.core.util.ExceptionHelper;
  * <p>
  * This ConfigurationPreProcessor can be activated by the setting or appending to the bootstrap property
  * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
- * <strong>variableSubstitution</strong> and making sure the required jars are available on the
- * classpath.
+ * <strong>variableSubstitution</strong> and making sure the required jars are available on the classpath.
  * </p>
  * <p>
  * The following properties can be specified in the bootstrap.properties to control the behaviour of the variable substitution;
@@ -35,30 +34,36 @@ import com.adaptris.core.util.ExceptionHelper;
  * <th>Description</th>
  * </tr>
  * <tr>
- * <td>variable-substitution.varprefix</td>
- * <td><strong>${</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_PREFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_PREFIX} </strong></td>
  * <td>No</td>
  * <td>The value here will be prepended to the variable name to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>variable-substitution.varpostfix</td>
- * <td><strong>}</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_POSTFIX_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_POSTFIX}</strong></td>
  * <td>No</td>
  * <td>The value here will be appended to the variable name to search for in the configuration to be switched out.</td>
  * </tr>
  * <tr>
- * <td>variable-substitution.properties.url</td>
+ * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_PROPERTIES_URL_KEY}</td>
  * <td></td>
  * <td>Yes</td>
  * <td>The URL to the property file containing the list of substitutions; in the form of variableName=Value. One substitution per
  * line.</td>
  * </tr>
  * <tr>
- * <td>variable-substitution.impl</td>
- * <td><strong>simple</strong></td>
+ * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_IMPL_KEY}</td>
+ * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
  * <td>No</td>
  * <td>The substitution engine that will perform the variable substitution. At this time there is only one implementation -
- * "simple".</td>
+ * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
+ * </tr>
+ * <tr>
+ * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_ADDITIONAL_LOGGING}</td>
+ * <td><strong>false</strong></td>
+ * <td>No</td>
+ * <td>Controls additional logging.</td>
  * </tr>
  * </table>
  * </p>
@@ -80,7 +85,7 @@ import com.adaptris.core.util.ExceptionHelper;
  * </code>
  * </pre>
  * 
- * Then all instances of<code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced within the adapter.xml as
+ * Then all instances of <code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced within the adapter.xml as
  * it is read in, but before the Adapter itself is unmarshalled.
  * 
  * @author amcgrath
@@ -125,11 +130,11 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
 
   private Properties loadSubstitutions() throws IOException, CoreException {
     Properties vars = null;
-    String variableSubPropertiesFile = this.getBootstrapProperties().getProperty(VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY);
+    String variableSubPropertiesFile = this.getBootstrapProperties().getProperty(VARSUB_PROPERTIES_URL_KEY);
     if (variableSubPropertiesFile == null) {
       log.error("Configuration variable substitution cannot be run; no properties file specified against key ({})",
-          VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY);
-      throw new CoreException("no properties file specified against key (" + VARIABLE_SUBSTITUTION_PROPERTIES_URL_KEY + ")");
+          VARSUB_PROPERTIES_URL_KEY);
+      throw new CoreException("no properties file specified against key (" + VARSUB_PROPERTIES_URL_KEY + ")");
     }
     else {
       vars = getPropertyFileLoader().load(variableSubPropertiesFile);
@@ -137,11 +142,11 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
     return vars;
   }
 
-  public PropertyFileLoader getPropertyFileLoader() {
+  PropertyFileLoader getPropertyFileLoader() {
     return propertyFileLoader;
   }
 
-  public void setPropertyFileLoader(PropertyFileLoader propertyFileLoader) {
+  void setPropertyFileLoader(PropertyFileLoader propertyFileLoader) {
     this.propertyFileLoader = propertyFileLoader;
   }
 
