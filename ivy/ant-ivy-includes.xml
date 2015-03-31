@@ -9,6 +9,7 @@
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
+    <property name="ivy.artifact.publish.status" value="integration"/>
 
     <!-- Default publish type is "JAR" -->
     <property name="ivy.publish.bundle.type" value="jar"/>
@@ -475,10 +476,11 @@
       <attribute name="resolver"/>
       <attribute name="ivy-config"/>
       <attribute name="revision"/>
+      <attribute name="status" default="${ivy.artifact.publish.status}"/>
       <attribute name="artifact.basedir" default="${project.dist.dir}"/>
       <sequential>
         <ivy:resolve file="@{ivy-config}" refresh="true" log="${ivy.logging}"/>
-        <ivy:publish resolver="@{resolver}" revision="@{revision}" overwrite="true" publishivy="true" >
+        <ivy:publish resolver="@{resolver}" revision="@{revision}" overwrite="true" status="@{status}" publishivy="true" >
           <artifacts pattern="@{artifact.basedir}/[module]/[type]/[artifact].[ext]"/>
         </ivy:publish>
       </sequential>
