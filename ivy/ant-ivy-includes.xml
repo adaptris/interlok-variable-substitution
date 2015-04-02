@@ -13,6 +13,7 @@
 
     <!-- Default publish type is "JAR" -->
     <property name="ivy.publish.bundle.type" value="jar"/>
+    <property name="ivy.report.dir" value="${build.dir}/ivy-report"/>
     <property name="coverage.report.output.dir" value="${tests.output.dir}/coverage"/>
     <property name="coverage.report.html.output.dir" value="${coverage.report.output.dir}/html"/>
     <property name="coverage.build.dir" value="${build.dir}/coverage"/>
@@ -507,7 +508,7 @@
   </target>
 
 
-  <target name="prepare-ivy" depends="taskdef.init, macrodef.init" description="Loads all the ivy definitions and settings">
+  <target name="prepare-ivy" depends="macrodef.init,taskdef.init">
     <!-- set up main compile classpath using ivy dependecny management -->
     <!-- Because of MSMQ, we need to restrict it to only standard types, as otherwise we'll have
          big trouble with .dll + .LIC files
@@ -516,6 +517,10 @@
     <ivy:retrieve log="${ivy.logging}" pattern="${build.dir}/signing/[artifact].[ext]" conf="signing" type="jks"/>
   </target>
 
+  <target name="ivy-report" depends="macrodef.init,taskdef.init" description="Generate an ivy dependency report">
+    <mkdir dir="${ivy.report.dir}"/>
+    <ivy:report todir="${ivy.report.dir}" conf="compile,runtime" graph="false"/>
+  </target>
 
   <target name="pom2ivy" depends="install-ivy" description="Convert a pom file into an ivy.xml">
     <ivy:settings file="${basedir}/../ivy-settings.xml" />
