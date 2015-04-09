@@ -42,8 +42,8 @@
 
     <!-- For Various ANT Tasks -->
     <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="ant->default" transitive="false"/>
-    <dependency org="com.yworks"  name="yguard" rev="2.4" conf="ant->default" transitive="false"/>
-    <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.2.201409121644" conf="ant->default"/>
+    <dependency org="com.yworks"  name="yguard" rev="2.5.2" conf="ant->default" transitive="false"/>
+    <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.4.201502262128" conf="ant->default"/>
     <!--
     <dependency org="com.google.code.findbugs" name="findbugs" rev="2.0.1" conf="ant"/>
     -->
