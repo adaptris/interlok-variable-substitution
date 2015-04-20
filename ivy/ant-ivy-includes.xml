@@ -209,6 +209,10 @@
           access="protected" breakiterator="yes" verbose="no"
           charset="ISO-8859-1" >
           <arg value="-quiet"/>
+          <!-- java8 only
+          <arg value="-Xdoclint:none"/>
+          -->
+          <arg value="-Xdoclint:none"/>
           <packageset dir="@{sourcepath}" defaultexcludes="yes">
             <packageset-filter/>
           </packageset>
