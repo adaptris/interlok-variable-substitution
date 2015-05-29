@@ -4,9 +4,9 @@ import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VAR_SUB_IMPL;
 import static com.adaptris.core.varsub.Constants.SYSPROP_ADDITIONAL_LOGGING;
+import static com.adaptris.core.varsub.Constants.SYSPROP_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.SYSPROP_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.SYSPROP_PREFIX_KEY;
-import static com.adaptris.core.varsub.Constants.SYSPROP_IMPL_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
 import java.io.IOException;
@@ -81,6 +81,7 @@ import com.adaptris.core.util.ExceptionHelper;
  * Then all available system properties (such as {@code user.dir}, provided they are marked as <code>${user.dir}</code>) will be
  * replaced within the adapter.xml as it is read in, but before the Adapter itself is unmarshalled.
  * 
+ * @since 3.0.1
  */
 public class SystemPropertiesPreProcessor extends AbstractConfigurationPreProcessor {
 
