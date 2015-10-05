@@ -466,6 +466,11 @@
         <if>
           <isfalse value="${unsigned.code}"/>
           <then>
+            <exec executable="/bin/bash" osfamily="unix" failonerror="false">
+              <arg value="-c"/>
+              <arg value="sync"/>
+            </exec>
+            <sleep milliseconds="500"/>
             <!-- We could specify the digestalg / sigalg to backwards compatibility as JDK7 only comes with
                  SHA256 and SHA256withRSA and if we were to deploy on JRE1.6...
                  e.g. sigalg="MD5withRSA" digestalg="SHA1"
