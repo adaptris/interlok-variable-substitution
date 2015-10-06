@@ -12,6 +12,7 @@
     <property name="ivy.artifact.publish.status" value="integration"/>
     <!--   Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.    
     <property name="signjar.tsa.url" value="http://tsa.starfieldtech.com"/>
+    <property name="signjar.tsa.url" value="http://timestamp.verisign.com/>
     -->
     <property name="signjar.tsa.url" value="https://timestamp.geotrust.com/tsa"/>
     
