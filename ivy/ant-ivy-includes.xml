@@ -10,7 +10,11 @@
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
     <property name="ivy.artifact.publish.status" value="integration"/>
-
+    <!--   Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.    
+    <property name="signjar.tsa.url" value="http://tsa.starfieldtech.com"/>
+    -->
+    <property name="signjar.tsa.url" value="https://timestamp.geotrust.com/tsa"/>
+    
     <!-- Default publish type is "JAR" -->
     <property name="ivy.publish.bundle.type" value="jar"/>
     <property name="ivy.report.dir" value="${build.dir}/ivy-report"/>
@@ -461,6 +465,7 @@
       <attribute name="storepass" default="${code-signing.storepass}"/>
       <attribute name="keypass" default="${code-signing.keypass}"/>
       <attribute name="alias"  default="${code-signing.alias}"/>
+      <attribute name="tsaurl" default="${signjar.tsa.url}"/>
       <attribute name="jarfile"/>
       <sequential>
         <if>
@@ -477,7 +482,7 @@
                  We sign in backwards compatibility mode because of jms-jmx (which could be deployed in a v2).
              Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.
             -->
-            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1" tsaurl="http://tsa.starfieldtech.com">
+            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1" tsaurl="@{tsaurl}">
             </signjar>
           </then>
         </if>
