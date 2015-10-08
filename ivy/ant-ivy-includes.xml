@@ -10,12 +10,12 @@
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
     <property name="ivy.artifact.publish.status" value="integration"/>
-    <!--   Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.    
+    <!--   Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.
     <property name="signjar.tsa.url" value="http://tsa.starfieldtech.com"/>
     <property name="signjar.tsa.url" value="http://timestamp.verisign.com/>
     -->
     <property name="signjar.tsa.url" value="https://timestamp.geotrust.com/tsa"/>
-    
+
     <!-- Default publish type is "JAR" -->
     <property name="ivy.publish.bundle.type" value="jar"/>
     <property name="ivy.report.dir" value="${build.dir}/ivy-report"/>
@@ -236,6 +236,7 @@
           <link offline="false" href="http://mx4j.sourceforge.net/docs/api/"/>
           <link offline="false" href="http://www.slf4j.org/apidocs/"/>
           <link offline="false" href="http://development.adaptris.com/javadocs/v3-snapshot/Interlok-API/"/>
+          <link offline="false" href="http://development.adaptris.net/javadocs/v3-snapshot/Interlok-Common/"/>
           <link offline="false" href="http://www.swiftmq.com/products/router/swiftlets/sys_amqp/client/javadoc/"/>
           <link offline="false" href="http://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/"/>
           <link offline="false" href="http://hc.apache.org/httpcomponents-core-ga/httpcore/apidocs/"/>
