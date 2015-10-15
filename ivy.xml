@@ -47,7 +47,7 @@
     <!--
     <dependency org="com.google.code.findbugs" name="findbugs" rev="2.0.1" conf="ant"/>
     -->
-    <dependency org="com.adaptris" name="code-signing" rev="2015-RELEASE" conf="signing->default"/>
+    <dependency org="com.adaptris" name="code-signing" rev="2017-RELEASE" conf="signing->default"/>
 
     <exclude org="ch.qos.logback" artifact="logback-classic"/>
     <exclude org="ch.qos.logback" artifact="logback-core"/>
