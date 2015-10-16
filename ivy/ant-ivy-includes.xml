@@ -26,8 +26,6 @@
 
     <property name="code-signing.keystore"  value="${build.dir}/signing/code-signing.jks"/>
     <property name="code-signing.alias" value="code_signer"/>
-    <property name="code-signing.storepass" value="3point142"/>
-    <property name="code-signing.keypass" value="3point142"/>
     <!-- Default this to false, so that we always sign -->
     <property name="unsigned.code"          value="false"/>
     <tstamp>
@@ -463,28 +461,23 @@
     </macrodef>
 
     <macrodef name="sign-jar" uri="uri:adapter">
-      <attribute name="keystore" default="${code-signing.keystore}"/>
-      <attribute name="storepass" default="${code-signing.storepass}"/>
-      <attribute name="keypass" default="${code-signing.keypass}"/>
-      <attribute name="alias"  default="${code-signing.alias}"/>
       <attribute name="tsaurl" default="${signjar.tsa.url}"/>
       <attribute name="jarfile"/>
       <sequential>
         <if>
-          <isfalse value="${unsigned.code}"/>
+          <and>
+            <isfalse value="${unsigned.code}"/>
+            <isset property="code-signing.keypass"/>
+            <isset property="code-signing.storepass"/>
+          </and>
           <then>
-            <exec executable="/bin/bash" osfamily="unix" failonerror="false">
-              <arg value="-c"/>
-              <arg value="sync"/>
-            </exec>
-            <sleep milliseconds="500"/>
             <!-- We could specify the digestalg / sigalg to backwards compatibility as JDK7 only comes with
                  SHA256 and SHA256withRSA and if we were to deploy on JRE1.6...
                  e.g. sigalg="MD5withRSA" digestalg="SHA1"
                  We sign in backwards compatibility mode because of jms-jmx (which could be deployed in a v2).
              Use http://tsa.starfieldtech.com or https://timestamp.geotrust.com/tsa as the TSAURL.
             -->
-            <signjar jar="@{jarfile}" alias="@{alias}" keystore="@{keystore}" storepass="@{storepass}" keypass="@{keypass}" sigalg="MD5withRSA" digestalg="SHA1" tsaurl="@{tsaurl}">
+            <signjar jar="@{jarfile}" alias="${code-signing.alias}" keystore="${code-signing.keystore}" storepass="${code-signing.storepass}" keypass="${code-signing.keypass}" sigalg="MD5withRSA" digestalg="SHA1" tsaurl="@{tsaurl}">
             </signjar>
           </then>
         </if>
