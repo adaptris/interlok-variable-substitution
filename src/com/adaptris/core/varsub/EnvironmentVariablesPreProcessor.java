@@ -3,7 +3,6 @@ package com.adaptris.core.varsub;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VAR_SUB_IMPL;
-import static com.adaptris.core.varsub.Constants.ENVVAR_ADDITIONAL_LOGGING;
 import static com.adaptris.core.varsub.Constants.ENVVAR_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.ENVVAR_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.ENVVAR_PREFIX_KEY;
@@ -15,7 +14,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,14 +57,8 @@ import com.adaptris.core.util.ExceptionHelper;
  * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_IMPL_KEY}</td>
  * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the system property. At this time there is only one implementation -
+ * <td>The substitution engine that will perform the system property. defaults to
  * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
- * </tr>
- * <tr>
- * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_ADDITIONAL_LOGGING}</td>
- * <td><strong>false</strong></td>
- * <td>No</td>
- * <td>Controls additional logging.</td>
  * </tr>
  * </table>
  * </p>
@@ -123,9 +115,7 @@ public class EnvironmentVariablesPreProcessor extends AbstractConfigurationPrePr
     String varSubImpl = defaultIfBlank(cfg.getProperty(ENVVAR_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(ENVVAR_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(ENVVAR_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    boolean logIt = BooleanUtils.toBoolean(defaultIfBlank(cfg.getProperty(ENVVAR_ADDITIONAL_LOGGING), "false"));
-
     VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
-    return impl.create().doSubstitution(xml, PropertyFileLoader.getEnvironment(), variablePrefix, variablePostfix, logIt);
+    return impl.create().doSubstitution(xml, PropertyFileLoader.getEnvironment(), variablePrefix, variablePostfix);
   }
 }

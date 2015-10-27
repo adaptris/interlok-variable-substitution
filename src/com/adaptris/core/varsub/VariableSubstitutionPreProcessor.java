@@ -56,14 +56,8 @@ import com.adaptris.core.util.ExceptionHelper;
  * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_IMPL_KEY}</td>
  * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the variable substitution. At this time there is only one implementation -
+ * <td>The substitution engine that will perform the variable substitution. defaults to
  * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
- * </tr>
- * <tr>
- * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_ADDITIONAL_LOGGING}</td>
- * <td><strong>false</strong></td>
- * <td>No</td>
- * <td>Controls additional logging.</td>
  * </tr>
  * </table>
  * </p>

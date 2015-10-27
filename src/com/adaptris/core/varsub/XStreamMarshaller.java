@@ -2,7 +2,6 @@ package com.adaptris.core.varsub;
 
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_POSTFIX;
 import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
-import static com.adaptris.core.varsub.Constants.VARSUB_ADDITIONAL_LOGGING;
 import static com.adaptris.core.varsub.Constants.VARSUB_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_PREFIX_KEY;
@@ -18,7 +17,6 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 
-import com.adaptris.core.AdaptrisMarshaller;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.util.URLString;
@@ -169,7 +167,6 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     Properties config = new Properties();
     config.setProperty(VARSUB_PREFIX_KEY, variablePrefix());
     config.setProperty(VARSUB_POSTFIX_KEY, variableSuffix());
-    config.setProperty(VARSUB_ADDITIONAL_LOGGING, String.valueOf(logSubstitutions()));
     config.setProperty(VARSUB_IMPL_KEY, substitutionImpl());
     return config;
   }
@@ -245,8 +242,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   /**
    * Set the Substitution Type.
    * 
-   * @param type the type, if not specified then {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL} . No other types
-   *          are supported currently.
+   * @param type the type, if not specified then {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.
    */
   public void setSubstitutionType(String type) {
     this.substitutionType = type;

@@ -19,7 +19,23 @@ public class Constants {
   /**
    * The default substitution method: {@value #DEFAULT_VAR_SUB_IMPL}
    */
-  public static final String DEFAULT_VAR_SUB_IMPL = "simple";
+  public static final String DEFAULT_VAR_SUB_IMPL = VariableSubstitutionImplFactory.simple.name();
+
+  /**
+   * Substitution method: {@value #VAR_SUB_SIMPLE_LOGGING}
+   */
+  public static final String VAR_SUB_SIMPLE_LOGGING = VariableSubstitutionImplFactory.simpleWithLogging.name();
+
+  /**
+   * Substitution method: {@value #VAR_SUB_STRICT}
+   */
+  public static final String VAR_SUB_STRICT = VariableSubstitutionImplFactory.strict.name();
+
+  /**
+   * Substitution method: {@value #VAR_SUB_STRICT_LOGGING}
+   */
+  public static final String VAR_SUB_STRICT_LOGGING = VariableSubstitutionImplFactory.strictWithLogging.name();
+
 
   /**
    * The key in configuration controlling the prefix: {@value #VARSUB_PREFIX_KEY}, defaults to {@value #DEFAULT_VARIABLE_PREFIX}
@@ -31,12 +47,6 @@ public class Constants {
    * 
    */
   public static final String VARSUB_POSTFIX_KEY = "variable-substitution.varpostfix";
-
-  /**
-   * The key in configuration controlling additional logging: {@value #VARSUB_ADDITIONAL_LOGGING}, defaults to false
-   * 
-   */
-  public static final String VARSUB_ADDITIONAL_LOGGING = "variable-substitution.log.substitutions";
 
   /**
    * The key in configuration defining the properties file where variables are defined:
@@ -64,12 +74,6 @@ public class Constants {
   public static final String SYSPROP_POSTFIX_KEY = "system-properties.varpostfix";
 
   /**
-   * The key in configuration controlling additional logging: {@value #SYSPROP_ADDITIONAL_LOGGING}, defaults to false
-   * 
-   */
-  public static final String SYSPROP_ADDITIONAL_LOGGING = "system-properties.log.substitutions";
-
-  /**
    * The key in configuration controlling the substitution method: {@value #SYSPROP_IMPL_KEY}, defaults to
    * {@value #DEFAULT_VAR_SUB_IMPL}
    * 
@@ -86,12 +90,6 @@ public class Constants {
    * 
    */
   public static final String ENVVAR_POSTFIX_KEY = "environment-variables.varpostfix";
-
-  /**
-   * The key in configuration controlling additional logging: {@value #ENVVAR_ADDITIONAL_LOGGING}, defaults to false
-   * 
-   */
-  public static final String ENVVAR_ADDITIONAL_LOGGING = "environment-variables.log.substitutions";
 
   /**
    * The key in configuration controlling the substitution method: {@value #ENVVAR_IMPL_KEY}, defaults to
