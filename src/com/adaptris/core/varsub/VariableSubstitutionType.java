@@ -45,7 +45,7 @@ public enum VariableSubstitutionType {
       return new SimpleStringSubstitution(true, true);
     }
   },
-  @Deprecated stringWithLogging() {
+  @Deprecated strictWithLogging() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution(true, true);
