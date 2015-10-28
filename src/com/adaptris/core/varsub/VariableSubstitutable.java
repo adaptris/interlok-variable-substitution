@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import com.adaptris.core.CoreException;
 
-public interface VariableSubstitutable {
+abstract class VariableSubstitutable {
   
   /**
    * Do the substitution.
@@ -17,7 +17,7 @@ public interface VariableSubstitutable {
    * @throws CoreException if the substitutions failed (e.g. some variables were undefined when using {@link
    * Constants#VAR_SUB_STRICT}
    */
-  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
+  abstract String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
       throws CoreException;
 
 }

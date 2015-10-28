@@ -1,33 +1,33 @@
 package com.adaptris.core.varsub;
 
 
-enum VariableSubstitutionImplFactory {
+public enum VariableSubstitutionType {
   
-  simple() {
+  SIMPLE() {
     @Override
-    public VariableSubstitutable create() {
+    VariableSubstitutable create() {
       return new SimpleStringSubstitution();
     }
   },
-  simpleWithLogging() {
+  SIMPLE_WITH_LOGGING() {
     @Override
-    public VariableSubstitutable create() {
+    VariableSubstitutable create() {
       return new SimpleStringSubstitution(true, false);
     }
   },
-  strict() {
+  STRICT() {
     @Override
-    public VariableSubstitutable create() {
+    VariableSubstitutable create() {
       return new SimpleStringSubstitution(false, true);
     }
   },
-  strictWithLogging() {
+  STRICT_WITH_LOGGING() {
     @Override
-    public VariableSubstitutable create() {
+    VariableSubstitutable create() {
       return new SimpleStringSubstitution(true, true);
     }
   };
   
-  public abstract VariableSubstitutable create();
+  abstract VariableSubstitutable create();
   
 }

@@ -113,7 +113,7 @@ public class SystemPropertiesPreProcessor extends AbstractConfigurationPreProces
     String varSubImpl = defaultIfBlank(cfg.getProperty(SYSPROP_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(SYSPROP_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(SYSPROP_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
+    VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, System.getProperties(), variablePrefix, variablePostfix);
   }
 }

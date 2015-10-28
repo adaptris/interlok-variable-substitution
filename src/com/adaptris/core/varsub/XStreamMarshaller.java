@@ -13,14 +13,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
+import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.core.CoreException;
+import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.util.URLString;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * XStream version of {@link AdaptrisMarshaller} that supports variable substitutions when unmarshalling.
@@ -45,15 +55,23 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias("xstream-varsub-marshaller")
 public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
+  private transient Logger log = LoggerFactory.getLogger(this.getClass());
   private transient PropertyFileLoader loader = new PropertyFileLoader();
 
-  private String variablePropertiesUrl;
+  @XStreamImplicit(itemFieldName = "variable-properties-url")
+  @NotNull
+  @AutoPopulated
+  private List<String> variablePropertiesUrls;
+
+  @AdvancedConfig
+  private VariableSubstitutionType substitutionType;
+  @AdvancedConfig
   private String variablePrefix;
+  @AdvancedConfig
   private String variablePostfix;
-  private Boolean logSubstitutions;
-  private String substitutionType;
 
   public XStreamMarshaller() throws CoreException {
+    setVariablePropertiesUrls(new ArrayList<String>());
   }
 
   @Override
@@ -148,31 +166,29 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   }
 
   private Properties loadSubstitutions() throws CoreException {
-    Properties vars = null;
+    Properties result = new Properties();
     try {
-      if (getVariablePropertiesUrl() == null) {
-        vars = new Properties();
+      for (String url : getVariablePropertiesUrls()) {
+        log.trace("Adding properties from [{}] to substitutions", url);
+        result.putAll(loader.load(url));
       }
-      else {
-        vars = loader.load(getVariablePropertiesUrl());
-      }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       ExceptionHelper.rethrowCoreException(e);
     }
-    return vars;
+    return result;
   }
+
 
   private Properties configAsProperties() {
     Properties config = new Properties();
     config.setProperty(VARSUB_PREFIX_KEY, variablePrefix());
     config.setProperty(VARSUB_POSTFIX_KEY, variableSuffix());
-    config.setProperty(VARSUB_IMPL_KEY, substitutionImpl());
+    config.setProperty(VARSUB_IMPL_KEY, substitutionImpl().name());
     return config;
   }
 
-  public String getVariablePropertiesUrl() {
-    return variablePropertiesUrl;
+  public List<String> getVariablePropertiesUrls() {
+    return variablePropertiesUrls;
   }
 
   /**
@@ -180,9 +196,14 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
    * 
    * @param s the url to the file (so it could be remote).
    */
-  public void setVariablePropertiesUrl(String s) {
-    this.variablePropertiesUrl = s;
+  public void setVariablePropertiesUrls(List<String> list) {
+    this.variablePropertiesUrls = Args.notNull(list, "variablePropertiesUrls");
   }
+
+  public void addVariablePropertiesUrls(String url) {
+    variablePropertiesUrls.add(Args.notNull(url, "Variable Property URL"));
+  }
+
 
   public String getVariablePrefix() {
     return variablePrefix;
@@ -218,37 +239,20 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     return defaultIfBlank(getVariablePostfix(), DEFAULT_VARIABLE_POSTFIX);
   }
 
-  public Boolean getLogSubstitutions() {
-    return logSubstitutions;
-  }
-
-  /**
-   * Whether or not to log substitutions.
-   * 
-   * @param b true to log each substitution as it happens, default null (false)
-   */
-  public void setLogSubstitutions(Boolean b) {
-    this.logSubstitutions = b;
-  }
-
-  boolean logSubstitutions() {
-    return getLogSubstitutions() != null ? getLogSubstitutions().booleanValue() : false;
-  }
-
-  public String getSubstitutionType() {
+  public VariableSubstitutionType getSubstitutionType() {
     return substitutionType;
   }
 
   /**
    * Set the Substitution Type.
    * 
-   * @param type the type, if not specified then {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.
+   * @param type the type, if not specified then {@link VariableSubstitutionType#SIMPLE}.
    */
-  public void setSubstitutionType(String type) {
+  public void setSubstitutionType(VariableSubstitutionType type) {
     this.substitutionType = type;
   }
 
-  String substitutionImpl() {
-    return defaultIfBlank(getSubstitutionType(), VariableSubstitutionImplFactory.simple.name());
+  VariableSubstitutionType substitutionImpl() {
+    return getSubstitutionType() != null ? getSubstitutionType() : VariableSubstitutionType.SIMPLE;
   }
 }

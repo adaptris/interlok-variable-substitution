@@ -19,23 +19,7 @@ public class Constants {
   /**
    * The default substitution method: {@value #DEFAULT_VAR_SUB_IMPL}
    */
-  public static final String DEFAULT_VAR_SUB_IMPL = VariableSubstitutionImplFactory.simple.name();
-
-  /**
-   * Substitution method: {@value #VAR_SUB_SIMPLE_LOGGING}
-   */
-  public static final String VAR_SUB_SIMPLE_LOGGING = VariableSubstitutionImplFactory.simpleWithLogging.name();
-
-  /**
-   * Substitution method: {@value #VAR_SUB_STRICT}
-   */
-  public static final String VAR_SUB_STRICT = VariableSubstitutionImplFactory.strict.name();
-
-  /**
-   * Substitution method: {@value #VAR_SUB_STRICT_LOGGING}
-   */
-  public static final String VAR_SUB_STRICT_LOGGING = VariableSubstitutionImplFactory.strictWithLogging.name();
-
+  public static final String DEFAULT_VAR_SUB_IMPL = VariableSubstitutionType.SIMPLE.name();
 
   /**
    * The key in configuration controlling the prefix: {@value #VARSUB_PREFIX_KEY}, defaults to {@value #DEFAULT_VARIABLE_PREFIX}
@@ -97,5 +81,4 @@ public class Constants {
    * 
    */
   public static final String ENVVAR_IMPL_KEY = "environment-variables.impl";
-
 }

@@ -5,6 +5,8 @@ import static com.adaptris.core.varsub.Constants.VARSUB_PROPERTIES_URL_KEY;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,17 +125,22 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
   }
 
   private Properties loadSubstitutions() throws IOException, CoreException {
-    Properties vars = null;
-    String variableSubPropertiesFile = this.getBootstrapProperties().getProperty(VARSUB_PROPERTIES_URL_KEY);
-    if (variableSubPropertiesFile == null) {
+    Properties result = new Properties();
+    // Get all the properties starting with variable-substitution.properties.url
+    // sort; and then iterate through them adding them to the list of substitutions.
+    SortedSet<String> keys = new TreeSet<>(
+        BootstrapProperties.getPropertySubset(getBootstrapProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
+    if (keys.size() == 0) {
       log.error("Configuration variable substitution cannot be run; no properties file specified against key ({})",
           VARSUB_PROPERTIES_URL_KEY);
       throw new CoreException("no properties file specified against key (" + VARSUB_PROPERTIES_URL_KEY + ")");
     }
-    else {
-      vars = getPropertyFileLoader().load(variableSubPropertiesFile);
+    for (String key : keys) {
+      String file = getBootstrapProperties().getProperty(key);
+      log.trace("Adding properties from [{}] to substitutions", file);
+      result.putAll(getPropertyFileLoader().load(file));
     }
-    return vars;
+    return result;
   }
 
   PropertyFileLoader getPropertyFileLoader() {

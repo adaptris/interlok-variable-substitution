@@ -24,7 +24,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = VariableSubstitutionImplFactory.simple.create().doSubstitution(testInput, props, "${", "}");
+    String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "${", "}");
     
     assertEquals("The quick brown fox jumps over the lazy dog", substitution);
   }
@@ -33,7 +33,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     Properties props = new Properties();
     props.put("over", "over");
     
-    String substitution = VariableSubstitutionImplFactory.simpleWithLogging.create().doSubstitution(testInput, props, "${", "}");
+    String substitution = VariableSubstitutionType.SIMPLE_WITH_LOGGING.create().doSubstitution(testInput, props, "${", "}");
     
     assertEquals("The quick brown ${fox} jumps over the lazy ${dog}", substitution);
   }
@@ -44,7 +44,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = VariableSubstitutionImplFactory.simple.create().doSubstitution(testInput, props, "", "");
+    String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "", "");
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -55,7 +55,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("over", "over");
     props.put("dog", "dog");
     
-    String substitution = VariableSubstitutionImplFactory.simple.create().doSubstitution(testInput, props, "&[", "]");
+    String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "&[", "]");
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -63,7 +63,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
   public void testSubstitutionWithoutProperties() throws Exception {
     Properties props = new Properties();
     
-    String substitution = VariableSubstitutionImplFactory.simple.create().doSubstitution(testInput, props, "${", "}");
+    String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "${", "}");
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -75,7 +75,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     String multipleMatchesString = "The quick brown ${fox} jumps ${over} the lazy ${fox}";
     
     String substitution =
- VariableSubstitutionImplFactory.simple.create().doSubstitution(multipleMatchesString, props, "${", "}");
+ VariableSubstitutionType.SIMPLE.create().doSubstitution(multipleMatchesString, props, "${", "}");
     
     assertEquals("The quick brown fox jumps ${over} the lazy fox", substitution);
   }
@@ -86,7 +86,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("overxxx", "over");
     props.put("dogxxx", "dog");
     
-    String substitution = VariableSubstitutionImplFactory.simpleWithLogging.create().doSubstitution(testInput, props, "${", "}");
+    String substitution = VariableSubstitutionType.SIMPLE_WITH_LOGGING.create().doSubstitution(testInput, props, "${", "}");
     
     assertEquals("The quick brown ${fox} jumps ${over} the lazy ${dog}", substitution);
   }
@@ -97,7 +97,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("fox", "fox");
     props.put("dog", "dog");
     try {
-      String substitution = VariableSubstitutionImplFactory.simple.create().doSubstitution(testInput, props, "${", "}");
+      String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "${", "}");
     } catch (CoreException e) {
       assertTrue(e.getMessage().contains("${over} is undefined"));
     }
@@ -108,7 +108,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("fox", "fox");
     props.put("dog", "dog");
     try {
-      String substitution = VariableSubstitutionImplFactory.simpleWithLogging.create().doSubstitution(testInput, props, "${", "}");
+      String substitution = VariableSubstitutionType.SIMPLE_WITH_LOGGING.create().doSubstitution(testInput, props, "${", "}");
     } catch (CoreException e) {
       assertTrue(e.getMessage().contains("${over} is undefined"));
     }

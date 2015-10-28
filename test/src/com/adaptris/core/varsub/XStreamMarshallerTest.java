@@ -38,7 +38,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   private XStreamMarshaller createMarshaller() throws Exception {
     XStreamMarshaller marshaller = new XStreamMarshaller();
-    marshaller.setVariablePropertiesUrl(PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
+    marshaller.addVariablePropertiesUrls(PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
     return marshaller;
   }
 
@@ -169,7 +169,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   public void testUnmarshal_WithLogging() throws Exception {
     XStreamMarshaller marshaller = createMarshaller();
-    marshaller.setLogSubstitutions(true);
+    marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE_WITH_LOGGING);
     Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
     doStandardAssertions(adapter);
 
@@ -177,7 +177,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   public void testUnmarshal_SubstitutionType() throws Exception {
     XStreamMarshaller marshaller = createMarshaller();
-    marshaller.setSubstitutionType(VariableSubstitutionImplFactory.simple.name());
+    marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE);
     Adapter adapter = (Adapter) marshaller.unmarshal(variablesAdapterFile);
     doStandardAssertions(adapter);
   }

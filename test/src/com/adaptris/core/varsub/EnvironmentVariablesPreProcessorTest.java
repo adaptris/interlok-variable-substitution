@@ -32,7 +32,7 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
     bootstrapProperties = new Properties();
     bootstrapProperties.put(Constants.SYSPROP_PREFIX_KEY, Constants.DEFAULT_VARIABLE_PREFIX);
     bootstrapProperties.put(Constants.SYSPROP_POSTFIX_KEY, Constants.DEFAULT_VARIABLE_POSTFIX);
-    bootstrapProperties.put(Constants.SYSPROP_IMPL_KEY, VariableSubstitutionImplFactory.simple.name());
+    bootstrapProperties.put(Constants.SYSPROP_IMPL_KEY, VariableSubstitutionType.SIMPLE.name());
     
     preProcessor = new EnvironmentVariablesPreProcessor(new JunitBootstrapProperties(bootstrapProperties));
   }

@@ -48,7 +48,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     sampleBootstrapProperties = new Properties();
     sampleBootstrapProperties.put("variable-substitution.varprefix", "${");
     sampleBootstrapProperties.put("variable-substitution.varpostfix", "}");
-    sampleBootstrapProperties.put("variable-substitution.impl", "simple");
+    sampleBootstrapProperties.put("variable-substitution.impl", VariableSubstitutionType.SIMPLE.name());
     sampleBootstrapProperties.put("variable-substitution.properties.url", "dummy-url-using-mocks-instead");
     
     preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));

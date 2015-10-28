@@ -32,7 +32,7 @@ class Processor {
     String variablePostfix = defaultIfBlank(cfg.getProperty(VARSUB_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
     Properties expandedVariables = new VariableExpander(variablePrefix, variablePostfix).resolve(variables);
 
-    VariableSubstitutionImplFactory impl = VariableSubstitutionImplFactory.valueOf(varSubImpl);
+    VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, expandedVariables, variablePrefix, variablePostfix);
   }
 
@@ -47,5 +47,4 @@ class Processor {
     }
     return result;
   }
-
 }
