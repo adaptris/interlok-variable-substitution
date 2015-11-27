@@ -12,9 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.CoreException;
+import com.adaptris.core.config.ConfigPreProcessorImpl;
 import com.adaptris.core.management.BootstrapProperties;
-import com.adaptris.core.runtime.AbstractConfigurationPreProcessor;
 import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.core.util.PropertyHelper;
+import com.adaptris.util.KeyValuePairSet;
 
 /**
  * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before
@@ -87,7 +89,7 @@ import com.adaptris.core.util.ExceptionHelper;
  * @author amcgrath
  * 
  */
-public class VariableSubstitutionPreProcessor extends AbstractConfigurationPreProcessor {
+public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
 
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -98,12 +100,17 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
     propertyFileLoader = new PropertyFileLoader();
   }
 
+  public VariableSubstitutionPreProcessor(KeyValuePairSet kvps) {
+    super(kvps);
+    propertyFileLoader = new PropertyFileLoader();
+  }
+
   @Override
   public String process(String xml) throws CoreException {
     String result = xml;
     try {
       Properties vars = loadSubstitutions();
-      result = new Processor(getBootstrapProperties()).process(xml, vars);
+      result = new Processor(getProperties()).process(xml, vars);
     }
     catch (Exception e) {
       ExceptionHelper.rethrowCoreException(e);
@@ -116,7 +123,7 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
     String result = "";
     try {
       Properties vars = loadSubstitutions();
-      result = new Processor(getBootstrapProperties()).process(urlToXml, vars);
+      result = new Processor(getProperties()).process(urlToXml, vars);
     }
     catch (Exception e) {
       ExceptionHelper.rethrowCoreException(e);
@@ -128,15 +135,15 @@ public class VariableSubstitutionPreProcessor extends AbstractConfigurationPrePr
     Properties result = new Properties();
     // Get all the properties starting with variable-substitution.properties.url
     // sort; and then iterate through them adding them to the list of substitutions.
-    SortedSet<String> keys = new TreeSet<>(
-        BootstrapProperties.getPropertySubset(getBootstrapProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
+    SortedSet<String> keys =
+        new TreeSet<>(PropertyHelper.getPropertySubset(getProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
     if (keys.size() == 0) {
       log.error("Configuration variable substitution cannot be run; no properties file specified against key ({})",
           VARSUB_PROPERTIES_URL_KEY);
       throw new CoreException("no properties file specified against key (" + VARSUB_PROPERTIES_URL_KEY + ")");
     }
     for (String key : keys) {
-      String file = getBootstrapProperties().getProperty(key);
+      String file = getProperties().getProperty(key);
       log.trace("Adding properties from [{}] to substitutions", file);
       result.putAll(getPropertyFileLoader().load(file));
     }

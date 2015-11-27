@@ -18,9 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.CoreException;
+import com.adaptris.core.config.ConfigPreProcessorImpl;
 import com.adaptris.core.management.BootstrapProperties;
-import com.adaptris.core.runtime.AbstractConfigurationPreProcessor;
 import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.util.KeyValuePairSet;
 
 /**
  * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports substitution of system properties
@@ -75,13 +76,18 @@ import com.adaptris.core.util.ExceptionHelper;
  * 
  * @since 3.0.1
  */
-public class SystemPropertiesPreProcessor extends AbstractConfigurationPreProcessor {
+public class SystemPropertiesPreProcessor extends ConfigPreProcessorImpl {
 
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   public SystemPropertiesPreProcessor(BootstrapProperties bootstrapProperties) {
     super(bootstrapProperties);
   }
+
+  public SystemPropertiesPreProcessor(KeyValuePairSet kvps) {
+    super(kvps);
+  }
+
 
   @Override
   public String process(String xml) throws CoreException {
@@ -109,7 +115,7 @@ public class SystemPropertiesPreProcessor extends AbstractConfigurationPreProces
   }
 
   String expand(String xml) throws CoreException {
-    Properties cfg = getBootstrapProperties();
+    Properties cfg = getProperties();
     String varSubImpl = defaultIfBlank(cfg.getProperty(SYSPROP_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(SYSPROP_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(SYSPROP_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
