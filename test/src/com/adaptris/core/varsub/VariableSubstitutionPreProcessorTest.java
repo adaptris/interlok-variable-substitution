@@ -84,7 +84,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
     
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -108,7 +108,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
 
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -131,7 +131,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
 
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -152,7 +152,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
 
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -174,7 +174,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
 
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -189,7 +189,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     
     // Remove the property - no substitution should take place.
     sampleBootstrapProperties.remove("variable-substitution.properties.url");
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
     
     try {
       preProcessor.process(variablesAdapterFile.toURI().toURL());
@@ -206,7 +206,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varprefix");
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -222,7 +222,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varpostfix");
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);

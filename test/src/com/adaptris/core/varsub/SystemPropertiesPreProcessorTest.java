@@ -57,7 +57,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
     
     // Remove the property - should use the default, which happens to be the same anyway....
     bootstrapProperties.remove(Constants.SYSPROP_PREFIX_KEY);
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(bootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(bootstrapProperties));
     
     String xml = preProcessor.process(adapterXmlFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -70,7 +70,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
 
     // Remove the property - should use the default, which happens to be the same anyway....
     bootstrapProperties.remove(Constants.SYSPROP_POSTFIX_KEY);
-    preProcessor.setBootstrapProperties(new JunitBootstrapProperties(bootstrapProperties));
+    preProcessor.setProperties(new JunitBootstrapProperties(bootstrapProperties));
     
     String xml = preProcessor.process(adapterXmlFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
