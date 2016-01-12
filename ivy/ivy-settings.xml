@@ -2,13 +2,15 @@
   <settings defaultResolver="chain-resolver"/>
   <credentials host="development.adaptris.net" realm="Sonatype Nexus Repository Manager" username="${ivy.user}" passwd="${ivy.password}"/>
 
-  <property name="nexus-public" value="http://development.adaptris.net/nexus/content/groups/public"/>
-  <property name="nexus-private" value="http://development.adaptris.net/nexus/content/groups/private"/>
-  <property name="nexus-releases" value="http://development.adaptris.net/nexus/content/repositories/releases"/>
-  <property name="nexus-snapshots" value="http://development.adaptris.net/nexus/content/repositories/snapshots"/>
-  <property name="thirdparty-snapshots" value="http://development.adaptris.net/nexus/content/groups/thirdparty-snapshots/"/>
-  <property name="nexus-private-snapshots" value="http://development.adaptris.net/nexus/content/repositories/adaptris-private-snapshots/"/>
-  <property name="nexus-private-releases" value="http://development.adaptris.net/nexus/content/repositories/adaptris-private-releases/"/>
+  <property name="nexus-base-url" value="https://development.adaptris.net"/>
+
+  <property name="nexus-public" value="${nexus-base-url}/nexus/content/groups/public"/>
+  <property name="nexus-private" value="${nexus-base-url}/nexus/content/groups/private"/>
+  <property name="nexus-releases" value="${nexus-base-url}/nexus/content/repositories/releases"/>
+  <property name="nexus-snapshots" value="${nexus-base-url}/nexus/content/repositories/snapshots"/>
+  <property name="thirdparty-snapshots" value="${nexus-base-url}/nexus/content/groups/thirdparty-snapshots/"/>
+  <property name="nexus-private-snapshots" value="${nexus-base-url}/nexus/content/repositories/adaptris-private-snapshots/"/>
+  <property name="nexus-private-releases" value="${nexus-base-url}/nexus/content/repositories/adaptris-private-releases/"/>
   <property name="local-m2-repo" value="${user.home}/.m2/repository/" />
   <resolvers>
       <!-- Because we're using "custom examples conf" then we can't use an ibiblio resolver...
