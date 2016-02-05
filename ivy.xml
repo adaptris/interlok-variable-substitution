@@ -51,6 +51,7 @@
 
     <exclude org="ch.qos.logback" artifact="logback-classic"/>
     <exclude org="ch.qos.logback" artifact="logback-core"/>
+    <exclude org="c3p0"/>
     <exclude org="commons-logging"/>
     <exclude org="org.apache.ant" artifact="ant"/>
     <exclude org="org.apache.ant" artifact="ant-launcher"/>
