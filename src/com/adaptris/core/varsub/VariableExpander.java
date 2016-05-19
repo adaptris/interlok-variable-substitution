@@ -4,6 +4,12 @@ import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.adaptris.core.CoreException;
+import com.adaptris.core.management.properties.PropertyResolver;
+import com.adaptris.core.util.ExceptionHelper;
+
 /**
  * Creates a resolved set of substitutions for use by {@link Processor}.
  * <p>
@@ -48,20 +54,21 @@ class VariableExpander {
     setVarSuffix(suffix);
   }
 
-  Properties resolve(Properties input) {
+  Properties resolve(Properties input) throws CoreException {
+    Properties resolved = resolveCustom(input);
     Properties result = new Properties();
     Properties sysProps = System.getProperties();
     Properties environment = PropertyFileLoader.getEnvironment();
 
-    Set<String> variables = createVariableNames(input);
+    Set<String> variables = createVariableNames(resolved);
     Set<String> sysPropVariables = createVariableNames(sysProps);
     Set<String> environmentVariables = createVariableNames(environment);
 
-    for (String key : input.stringPropertyNames()) {
-      String value = input.getProperty(key);
+    for (String key : resolved.stringPropertyNames()) {
+      String value = resolved.getProperty(key);
       // Loop through and sort out all the defined variables first.
       while (containsVariable(value, variables)) {
-        value = expand(value, input);
+        value = expand(value, resolved);
       }
       // Now loop through and expand any system properties.
       while (containsVariable(value, sysPropVariables)) {
@@ -76,6 +83,21 @@ class VariableExpander {
     }
     return result;
   }
+
+  private Properties resolveCustom(Properties input) throws CoreException {
+    Properties result = new Properties();
+    try {
+      PropertyResolver resolver = PropertyResolver.getDefaultInstance();
+      for (String key : input.stringPropertyNames()) {
+        String value = StringUtils.trimToEmpty(input.getProperty(key));
+        result.setProperty(key, resolver.resolve(value));
+      }
+    } catch (Exception exc) {
+      throw ExceptionHelper.wrapCoreException(exc);
+    }
+    return result;
+  }
+
 
   private boolean containsVariable(String value, Set<String> variables) {
     for (String var : variables) {
