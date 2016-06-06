@@ -5,7 +5,7 @@
     <property name="ivy.repo" value="nexus-snapshots"/>
     <property name="ivy.dir" value="${basedir}/../resources"/>
     <property name="ivy.jar.file" value="${ivy.dir}/ivy.jar"/>
-    <property name="ivy.download.baseurl" value="http://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
+    <property name="ivy.download.baseurl" value="https://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
     <property name="ivy.xml.file" value="${basedir}/ivy.xml"/>
     <property name="ivy.offline.mode" value="false"/>
@@ -52,7 +52,7 @@
 
   <target name="taskdef.init" depends="init, install-ivy">
     <property name="ivy.logging" value="quiet"/>
-    <ivy:settings file="${basedir}/../resources/ivy-settings.xml" />
+    <ivy:settings file="${ivy.dir}/ivy-settings.xml" />
     <ivy:resolve file="${ivy.xml.file}" refresh="true" showprogress="false" log="${ivy.logging}" useCacheOnly="${ivy.offline.mode}"/>
 
     <ivy:cachepath pathid="classpath.ant-tools" conf="ant" type="jar,zip,bundle"/>
@@ -493,7 +493,7 @@
       <attribute name="artifact.basedir" default="${project.dist.dir}"/>
       <sequential>
         <ivy:resolve file="@{ivy-config}" refresh="true" log="${ivy.logging}"/>
-        <ivy:publish resolver="@{resolver}" revision="@{revision}" overwrite="true" status="@{status}" publishivy="true" >
+        <ivy:publish resolver="@{resolver}" revision="@{revision}" overwrite="true" status="@{status}" publishivy="true" haltonmissing="false">
           <artifacts pattern="@{artifact.basedir}/[module]/[type]/[artifact].[ext]"/>
         </ivy:publish>
       </sequential>
@@ -515,6 +515,25 @@
           <attribute name="Implementation-Title" value="@{title}"/>
           <attribute name="Implementation-Vendor" value="@{vendor}"/>
         </manifest>
+      </sequential>
+    </macrodef>
+
+    <macrodef name="curl-upload" uri="uri:adapter">
+      <attribute name="file"/>
+      <attribute name="url"/>
+      <attribute name="user" default="${ivy.user}"/>
+      <attribute name="password" default="${ivy.password}"/>
+      <sequential>
+        <echo message="CURL: Uploading @{file} to @{url}"/>
+        <exec executable="curl">
+          <arg value="--silent"/>
+          <arg value="--show-error"/>
+          <arg value="-u"/>
+          <arg value="@{user}:@{password}"/>
+          <arg value="--upload-file"/>
+          <arg value="@{file}"/>
+          <arg value="@{url}"/>
+        </exec>
       </sequential>
     </macrodef>
   </target>
@@ -542,13 +561,20 @@
 
   <target name="prepare-for-publish" depends="test-no-reports, jar, javadoc">
     <mkdir dir="${project.dist.dir}/${project.name}/pom"/>
-
     <!-- Stick a shim in here to support WAR files -->
+    <!-- If the WAR file is far too large so we don't create it in the sub-dir, so ivy doesn't try to publish it
+         ZZLC - Check the length, and then do the copy if it's < 50 Mb...
+    -->
     <if>
       <equals arg1="war" arg2="${ivy.publish.bundle.type}"/>
       <then>
-        <mkdir dir="${project.dist.dir}/${project.name}/war"/>
-        <copy todir="${project.dist.dir}/${project.name}/war" file="${project.dist.dir}/${project.war.name}"/>
+        <if>
+          <length file="${project.dist.dir}/${project.war.name}" when="less" length="52428800" />
+          <then>
+            <mkdir dir="${project.dist.dir}/${project.name}/war"/>
+            <copy todir="${project.dist.dir}/${project.name}/war" file="${project.dist.dir}/${project.war.name}"/>
+          </then>
+        </if>
       </then>
     </if>
     <if>
@@ -591,7 +617,23 @@
 
   <target name="publish" depends="prepare-for-publish">
     <adapter:publish-artifact resolver="${ivy.repo}" revision="${ivy.publish.revision}" artifact.basedir="${project.dist.dir}" ivy-config="${ivy.xml.file}"/>
+    <!-- This publishes the WAR file if it's missing from the prepare-for-publish -->
+    <if>
+      <equals arg1="war" arg2="${ivy.publish.bundle.type}"/>
+      <then>
+        <if>
+          <length file="${project.dist.dir}/${project.war.name}" when="greater" length="52428800" />
+          <then>
+            <var name="project.war.name.nexus" value="${project.name}-${ivy.publish.revision}.${ivy.publish.bundle.type}"/>
+            <checksum file="${project.dist.dir}/${project.war.name}" algorithm="MD5" pattern="{1}.{0}" forceoverwrite="true"/>
+            <checksum file="${project.dist.dir}/${project.war.name}" algorithm="SHA1" pattern="{1}.{0}" forceoverwrite="true"/>
+            <adapter:curl-upload file="${project.dist.dir}/${project.war.name}" url="${nexus.artifact.basedir}/${ivy.publish.revision}/${project.war.name.nexus}"/>
+            <adapter:curl-upload file="${project.dist.dir}/${project.war.name}.MD5" url="${nexus.artifact.basedir}/${ivy.publish.revision}/${project.war.name.nexus}.md5"/>
+            <adapter:curl-upload file="${project.dist.dir}/${project.war.name}.SHA1" url="${nexus.artifact.basedir}/${ivy.publish.revision}/${project.war.name.nexus}.sha1"/>
+            <var name="project.war.name.nexus" unset="true"/>
+          </then>
+        </if>
+      </then>
+    </if>
   </target>
-
-
 </project>
