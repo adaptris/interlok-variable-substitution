@@ -1,7 +1,7 @@
 ﻿<project basedir="." default="compile" name="varsub" xmlns:adapter="uri:adapter" xmlns:ivy="antlib:org.apache.ivy.ant">
   <property file="build.properties"/>
   <property file="ivy.properties"/>
-  <import file="${basedir}/../resources/ant-ivy-includes.xml"/> <!-- Ivy tasks -->
+  <import file="${basedir}/ivy/ant-ivy-includes.xml"/> <!-- Ivy tasks -->
 
   <tstamp>
     <format property="today" pattern="yyyy-MM-dd" locale="en"/>
@@ -9,8 +9,8 @@
 
   <target name="init">
 
-    <property name="ivy.publish.revision" value="3.3-SNAPSHOT"/>  <!-- Version number of this artifact -->
-    <property name="adp-core-version" value="3.3-SNAPSHOT"/>
+    <property name="ivy.publish.revision" value="3.4-SNAPSHOT"/>  <!-- Version number of this artifact -->
+    <property name="adp-core-version" value="3.4-SNAPSHOT"/>
     <property name="manifest.title" value="Interlok Config Pre-Processor: variable substitution support"/>
     
     <property name="src.dir" value="${basedir}/src"/>

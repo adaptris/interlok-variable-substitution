@@ -3,7 +3,7 @@
   <target name="init-ivy">
     <property name="ivy.install.version" value="2.3.0"/>
     <property name="ivy.repo" value="nexus-snapshots"/>
-    <property name="ivy.dir" value="${basedir}/../resources"/>
+    <property name="ivy.dir" value="${basedir}/ivy"/>
     <property name="ivy.jar.file" value="${ivy.dir}/ivy.jar"/>
     <property name="ivy.download.baseurl" value="https://development.adaptris.net/nexus/content/groups/public/org/apache/ivy/ivy"/>
     <property name="ivy.download.url" value="${ivy.download.baseurl}/${ivy.install.version}/ivy-${ivy.install.version}.jar"/>
