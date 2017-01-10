@@ -1,9 +1,6 @@
 package com.adaptris.core.varsub;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
@@ -31,6 +28,9 @@ class PropertyFileLoader {
   private Properties load(URLString loc) throws IOException {
     Properties result = new Properties();
     try (InputStream inputStream = connectToUrl(loc)) {
+      if (inputStream == null){
+        throw new FileNotFoundException(loc.toString());
+      }
       result.load(inputStream);
     }
     return result;
