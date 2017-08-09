@@ -25,9 +25,11 @@ import org.slf4j.LoggerFactory;
 
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.core.AdaptrisMarshaller;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.Args;
 import com.adaptris.core.util.ExceptionHelper;
+import com.adaptris.util.URLHelper;
 import com.adaptris.util.URLString;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -128,7 +130,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   public Object unmarshal(URLString url) throws CoreException {
     validate(url);
     Object result = null;
-    try (InputStream in = connectToUrl(url)) {
+    try (InputStream in = URLHelper.connect(url)) {
       if (in != null) {
         result = this.unmarshal(in);
       }
