@@ -1,11 +1,13 @@
 package com.adaptris.core.varsub;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Map;
 import java.util.Properties;
 
+import com.adaptris.util.URLHelper;
 import com.adaptris.util.URLString;
 
 /**
@@ -27,40 +29,13 @@ class PropertyFileLoader {
 
   private Properties load(URLString loc) throws IOException {
     Properties result = new Properties();
-    try (InputStream inputStream = connectToUrl(loc)) {
+    try (InputStream inputStream = URLHelper.connect(loc)) {
       if (inputStream == null){
         throw new FileNotFoundException(loc.toString());
       }
       result.load(inputStream);
     }
     return result;
-  }
-
-  // Copied out of AbstractMarshaller...
-  private InputStream connectToUrl(URLString loc) throws IOException {
-    if (loc.getProtocol() == null || "file".equals(loc.getProtocol())) {
-      return connectToFile(loc.getFile());
-    }
-    URL url = new URL(loc.toString());
-    URLConnection conn = url.openConnection();
-    // ProxyUtil.applyBasicProxyAuthorisation(conn);
-    return conn.getInputStream();
-  }
-
-  private InputStream connectToFile(String localFile) throws IOException {
-    InputStream in = null;
-    File f = new File(localFile);
-    if (f.exists()) {
-      in = new FileInputStream(f);
-    }
-    else {
-      ClassLoader c = this.getClass().getClassLoader();
-      URL u = c.getResource(localFile);
-      if (u != null) {
-        in = u.openStream();
-      }
-    }
-    return in;
   }
 
   public static Properties getEnvironment() {

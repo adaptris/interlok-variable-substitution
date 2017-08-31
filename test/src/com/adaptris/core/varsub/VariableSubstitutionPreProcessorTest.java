@@ -6,12 +6,12 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.adaptris.core.Adapter;
-import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
@@ -191,12 +191,9 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     sampleBootstrapProperties.remove("variable-substitution.properties.url");
     preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
     
-    try {
-      preProcessor.process(variablesAdapterFile.toURI().toURL());
-      fail("Should fail, missing mandatory property url.");
-    } catch (CoreException ex) {
-      // expected
-    }
+    String adapterXml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    
+    assertEquals(FileUtils.readFileToString(variablesAdapterFile), adapterXml);
   }
   
   public void testSimpleVarSubAdapterRegistryNoPrefix() throws Exception {

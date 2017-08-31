@@ -138,9 +138,8 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     SortedSet<String> keys =
         new TreeSet<>(PropertyHelper.getPropertySubset(getProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
     if (keys.size() == 0) {
-      log.error("Configuration variable substitution cannot be run; no properties file specified against key ({})",
+      log.warn("Configuration variable substitution will have no effect; no properties file specified against key ({})",
           VARSUB_PROPERTIES_URL_KEY);
-      throw new CoreException("no properties file specified against key (" + VARSUB_PROPERTIES_URL_KEY + ")");
     }
     for (String key : keys) {
       String file = getProperties().getProperty(key);
