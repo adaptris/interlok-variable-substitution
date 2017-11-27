@@ -26,7 +26,9 @@
   </publications>
 
   <dependencies>
-    <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" changing="true"  conf="compile->default"/>
+    <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
     <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
     <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
 
@@ -47,7 +49,7 @@
     <!--
     <dependency org="com.google.code.findbugs" name="findbugs" rev="2.0.1" conf="ant"/>
     -->
-    <dependency org="com.adaptris" name="code-signing" rev="2017-RELEASE" conf="signing->default"/>
+    <dependency org="com.adaptris" name="code-signing" rev="2019-RELEASE" conf="signing->default"/>
 
     <exclude org="ch.qos.logback" artifact="logback-classic"/>
     <exclude org="ch.qos.logback" artifact="logback-core"/>
