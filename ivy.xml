@@ -21,7 +21,7 @@
   <publications>
      <artifact name="adp-varsub" type="jar" ext="jar"/>
      <artifact name="adp-varsub" type="pom" ext="pom"/>
-     <artifact name="adp-varsub-javadoc" type="javadoc" ext="zip" conf="javadoc"/>
+
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
   </publications>
 
