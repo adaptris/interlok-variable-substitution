@@ -14,8 +14,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.CoreException;
 import com.adaptris.core.config.ConfigPreProcessorImpl;
@@ -56,10 +54,10 @@ import com.adaptris.util.KeyValuePairSet;
  * </tr>
  * <tr>
  * <td>{@value com.adaptris.core.varsub.Constants#ENVVAR_IMPL_KEY}</td>
- * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
+ * <td><strong>SIMPLE</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the system property. defaults to
- * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
+ * <td>The substitution engine that will perform the variable substitution. defaults to {@code SIMPLE}
+ * ({@link com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}).</td>
  * </tr>
  * </table>
  * </p>
@@ -68,8 +66,7 @@ import com.adaptris.util.KeyValuePairSet;
  * <pre>
  * <code>
  * preProcessors=environmentVariables
- * </code>
- * </pre>
+ * </code> </pre>
  * 
  * Then all available environment variables (such as <code>COMPUTERNAME</code> (windows only)), provided they are marked as
  * <code>${COMPUTERNAME}</code>) will be replaced within the adapter.xml as it is read in, but before the Adapter itself is
@@ -78,8 +75,6 @@ import com.adaptris.util.KeyValuePairSet;
  * @since 3.0.1
  */
 public class EnvironmentVariablesPreProcessor extends ConfigPreProcessorImpl {
-
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   public EnvironmentVariablesPreProcessor(BootstrapProperties bootstrapProperties) {
     super(bootstrapProperties);

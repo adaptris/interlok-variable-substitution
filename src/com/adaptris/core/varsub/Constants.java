@@ -17,7 +17,7 @@ public class Constants {
   public static final String DEFAULT_VARIABLE_POSTFIX = "}";
 
   /**
-   * The default substitution method: {@value #DEFAULT_VAR_SUB_IMPL}
+   * The default substitution method: {@code SIMPLE}
    */
   public static final String DEFAULT_VAR_SUB_IMPL = VariableSubstitutionType.SIMPLE.name();
 
@@ -40,9 +40,16 @@ public class Constants {
   public static final String VARSUB_PROPERTIES_URL_KEY = "variable-substitution.properties.url";
 
   /**
-   * The key in configuration controlling the substitution method: {@value #VARSUB_IMPL_KEY}, defaults to
-   * {@value #DEFAULT_VAR_SUB_IMPL}
-   * 
+   * The key in configuration defining the properties file allowing formatting of the URL: {@value #VARSUB_PROPERTIES_USE_HOSTNAME}.
+   * <p>
+   * The default is false, but if set to true, then each URL defined by {@value #VARSUB_PROPERTIES_URL_KEY} will be formatted using
+   * {@code String#format(String, Object...)} passing in the hostname as the parameter.
+   * </p>
+   */
+  public static final String VARSUB_PROPERTIES_USE_HOSTNAME = "variable-substitution.url.useHostname";
+
+  /**
+   * The key in configuration controlling the substitution method: {@value #VARSUB_IMPL_KEY}, defaults to {@code SIMPLE}
    */
   public static final String VARSUB_IMPL_KEY = "variable-substitution.impl";
 
@@ -58,9 +65,7 @@ public class Constants {
   public static final String SYSPROP_POSTFIX_KEY = "system-properties.varpostfix";
 
   /**
-   * The key in configuration controlling the substitution method: {@value #SYSPROP_IMPL_KEY}, defaults to
-   * {@value #DEFAULT_VAR_SUB_IMPL}
-   * 
+   * The key in configuration controlling the substitution method: {@value #SYSPROP_IMPL_KEY}, defaults to {@code SIMPLE} *
    */
   public static final String SYSPROP_IMPL_KEY = "system-properties.impl";
 
@@ -76,8 +81,7 @@ public class Constants {
   public static final String ENVVAR_POSTFIX_KEY = "environment-variables.varpostfix";
 
   /**
-   * The key in configuration controlling the substitution method: {@value #ENVVAR_IMPL_KEY}, defaults to
-   * {@value #DEFAULT_VAR_SUB_IMPL}
+   * The key in configuration controlling the substitution method: {@value #ENVVAR_IMPL_KEY}, defaults to {@code SIMPLE}
    * 
    */
   public static final String ENVVAR_IMPL_KEY = "environment-variables.impl";

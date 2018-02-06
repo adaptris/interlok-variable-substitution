@@ -9,6 +9,7 @@ import com.adaptris.core.Adapter;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
+import com.adaptris.util.KeyValuePairSet;
 
 public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
   private static final String KEY_SYSPROP_ADAPTER_XML = "varsub.sysprop.adapter.xml";
@@ -38,8 +39,8 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
   }
   
   public void testSystemPropertyReplacement_URL() throws Exception {
-    
-    String xml = preProcessor.process(adapterXmlFile.toURI().toURL());
+    SystemPropertiesPreProcessor myProcessor = new SystemPropertiesPreProcessor(new KeyValuePairSet(bootstrapProperties));
+    String xml = myProcessor.process(adapterXmlFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
     doStandardAssertions(adapter);

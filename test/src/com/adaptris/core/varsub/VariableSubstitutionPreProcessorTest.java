@@ -1,5 +1,8 @@
 package com.adaptris.core.varsub;
 
+import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_MISSING_SUBSTITUTION_PROPERTIES;
+import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_SUBSTITUTION_PROPERTIES;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -15,11 +18,11 @@ import com.adaptris.core.Adapter;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
+import com.adaptris.util.KeyValuePairSet;
 
 public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   private static final String PROPS_VARIABLES_ADAPTER = "varsub.variables.adapter.xml";
-  private static final String SAMPLE_SUBSTITUTION_PROPERTIES = "varsub.variables.properties";
   
   private File variablesAdapterFile;
   
@@ -58,7 +61,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   public void testSimpleVarSubAdapterRegistry() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -69,7 +72,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   public void testSimpleVarSubAdapterRegistry_String() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
 
     String xml = preProcessor.process(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
@@ -78,15 +81,17 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   }
 
   public void testSimpleVarSubAdapterRegistryWithProperPropertiesFile() throws Exception {
-    // We don't actually want to go to the file system for the variable substitutions
-    Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+
+    Properties myBootstrapProperties = new Properties();
+    myBootstrapProperties.put(Constants.VARSUB_PROPERTIES_USE_HOSTNAME, "true");
     
-    sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
-    
-    preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
-    
-    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    myBootstrapProperties.put("variable-substitution.properties.url.1", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
+    myBootstrapProperties.put("variable-substitution.properties.url.2",
+        PROPERTIES.getProperty(SAMPLE_MISSING_SUBSTITUTION_PROPERTIES));
+    VariableSubstitutionPreProcessor myPreProcessor = new VariableSubstitutionPreProcessor(
+        new KeyValuePairSet(myBootstrapProperties));
+
+    String xml = myPreProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
     doStandardAssertions(adapter);
@@ -104,7 +109,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     myVarSubs.put("workflow.id2", "${my.workflow}ID2");
     myVarSubs.put("my.workflow", "MyWorkflow");
 
-    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(myVarSubs);
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
@@ -127,7 +132,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     myVarSubs.put("workflow.id2", "${my.workflow}ID2");
     myVarSubs.put("my.workflow", "MyWorkflow");
 
-    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(myVarSubs);
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
@@ -148,7 +153,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     myVarSubs.put("workflow.id2", "${my.workflow}ID2");
     myVarSubs.put("my.workflow", "MyWorkflow");
 
-    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(myVarSubs);
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
@@ -170,7 +175,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     myVarSubs.put("workflow.id2", "${my.workflow}ID2");
     myVarSubs.put("my.workflow", "MyWorkflow");
 
-    when(propertyFileLoader.load(anyString())).thenReturn(myVarSubs);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(myVarSubs);
 
     sampleBootstrapProperties.put("variable-substitution.properties.url", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
 
@@ -185,7 +190,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   public void testSimpleVarSubAdapterRegistryNoPropertyURL() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
     
     // Remove the property - no substitution should take place.
     sampleBootstrapProperties.remove("variable-substitution.properties.url");
@@ -199,7 +204,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   public void testSimpleVarSubAdapterRegistryNoPrefix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
     
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varprefix");
@@ -215,7 +220,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
   public void testSimpleVarSubAdapterRegistryNoPostfix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
     
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varpostfix");
@@ -235,7 +240,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     variableSubstitutions.remove("workflow.id1");
     
  // We don't actually want to go to the file system for the variable substitutions
-    when(propertyFileLoader.load(anyString())).thenReturn(variableSubstitutions);
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
     
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);

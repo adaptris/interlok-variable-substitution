@@ -56,10 +56,10 @@ import com.adaptris.util.KeyValuePairSet;
  * </tr>
  * <tr>
  * <td>{@value com.adaptris.core.varsub.Constants#SYSPROP_IMPL_KEY}</td>
- * <td><strong>{@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}</strong></td>
+ * <td><strong>SIMPLE</strong></td>
  * <td>No</td>
- * <td>The substitution engine that will perform the system property. defaults to
- * {@value com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}.</td>
+ * <td>The substitution engine that will perform the variable substitution. defaults to {@code SIMPLE}
+ * ({@link com.adaptris.core.varsub.Constants#DEFAULT_VAR_SUB_IMPL}).</td>
  * </tr>
  * </table>
  * </p>
@@ -68,8 +68,7 @@ import com.adaptris.util.KeyValuePairSet;
  * <pre>
  * <code>
  * preProcessors=systemProperties
- * </code>
- * </pre>
+ * </code> </pre>
  * 
  * Then all available system properties (such as {@code user.dir}, provided they are marked as <code>${user.dir}</code>) will be
  * replaced within the adapter.xml as it is read in, but before the Adapter itself is unmarshalled.

@@ -9,6 +9,7 @@ import com.adaptris.core.Adapter;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
+import com.adaptris.util.KeyValuePairSet;
 
 public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
   private static final String KEY_ENV_ADAPTER_XML = "varsub.environment.adapter.xml";
@@ -38,8 +39,10 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
   }
   
   public void testEnvironmentVariableReplacement_URL() throws Exception {
-    
-    String xml = preProcessor.process(adapterXmlFile.toURI().toURL());
+    EnvironmentVariablesPreProcessor myProcessor = new EnvironmentVariablesPreProcessor(
+        new KeyValuePairSet(bootstrapProperties));
+
+    String xml = myProcessor.process(adapterXmlFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
     
     doStandardAssertions(adapter);
