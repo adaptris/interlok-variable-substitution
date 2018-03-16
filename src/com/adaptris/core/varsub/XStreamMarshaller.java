@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +21,13 @@ import java.util.Properties;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
+import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMarshaller;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.util.Args;
@@ -71,6 +74,9 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   private String variablePrefix;
   @AdvancedConfig
   private String variablePostfix;
+  @AdvancedConfig
+  @InputFieldDefault(value = "false")
+  private Boolean useHostname;
 
   public XStreamMarshaller() throws CoreException {
     setVariablePropertiesUrls(new ArrayList<String>());
@@ -78,14 +84,14 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   @Override
   public Object unmarshal(Reader in) throws CoreException {
-    validate(in);
+    Args.notNull(in, "reader");
     Object result = null;
     try {
       String xml = IOUtils.toString(in);
       result = unmarshal(xml);
     }
     catch (Exception e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     finally {
       IOUtils.closeQuietly(in);
@@ -95,40 +101,40 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   @Override
   public Object unmarshal(String input) throws CoreException {
-    validate(input);
+    Args.notNull(input, "input");
     String xml = new Processor(configAsProperties()).process(input, loadSubstitutions());
     return getInstance().fromXML(xml);
   }
 
   @Override
   public Object unmarshal(File file) throws CoreException {
-    validate(file);
+    Args.notNull(file, "file");
     Object result = null;
     try  {
       result = unmarshal(new FileInputStream(file));
     }
     catch (Exception e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
   }
 
   @Override
   public Object unmarshal(URL url) throws CoreException {
-    validate(url);
+    Args.notNull(url, "url");
     Object result = null;
     try {
       result = this.unmarshal(url.openStream());
     }
     catch (Exception e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
   }
 
   @Override
   public Object unmarshal(URLString url) throws CoreException {
-    validate(url);
+    Args.notNull(url, "url");
     Object result = null;
     try (InputStream in = URLHelper.connect(url)) {
       if (in != null) {
@@ -139,21 +145,21 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
       }
     }
     catch (Exception e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
   }
 
   @Override
   public Object unmarshal(InputStream in) throws CoreException {
-    validate(in);
+    Args.notNull(in, "inputstream");
     Object result = null;
     try {
       String xml = IOUtils.toString(in);
       result = unmarshal(xml);
     }
     catch (IOException e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     finally {
       IOUtils.closeQuietly(in);
@@ -161,21 +167,16 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     return result;
   }
 
-  private static void validate(Object o) {
-    if (o == null) {
-      throw new IllegalArgumentException("Attempt to unmarshal null object");
-    }
-  }
 
   private Properties loadSubstitutions() throws CoreException {
     Properties result = new Properties();
     try {
+      String hostname = InetAddress.getLocalHost().getHostName();
       for (String url : getVariablePropertiesUrls()) {
-        log.trace("Adding properties from [{}] to substitutions", url);
-        result.putAll(loader.load(url));
+        result.putAll(useHostname() ? loader.formatAndLoad(url, true, hostname) : loader.load(url));
       }
     } catch (IOException e) {
-      ExceptionHelper.rethrowCoreException(e);
+      throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
   }
@@ -196,7 +197,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   /**
    * Specify the file where the substitution properties are held.
    * 
-   * @param s the url to the file (so it could be remote).
+   * @param list the urls (so it could be remote).
    */
   public void setVariablePropertiesUrls(List<String> list) {
     this.variablePropertiesUrls = Args.notNull(list, "variablePropertiesUrls");
@@ -256,5 +257,28 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   VariableSubstitutionType substitutionImpl() {
     return getSubstitutionType() != null ? getSubstitutionType() : VariableSubstitutionType.SIMPLE;
+  }
+
+  public Boolean getUseHostname() {
+    return useHostname;
+  }
+
+  /**
+   * Whether or not to attempt to format the URL with the hostname.
+   * 
+   * @param b
+   * @see Constants#VARSUB_PROPERTIES_USE_HOSTNAME
+   */
+  public void setUseHostname(Boolean b) {
+    this.useHostname = b;
+  }
+
+  public XStreamMarshaller withUseHostname(Boolean b) {
+    setUseHostname(b);
+    return this;
+  }
+
+  private boolean useHostname() {
+    return BooleanUtils.toBooleanDefaultIfNull(getUseHostname(), false);
   }
 }

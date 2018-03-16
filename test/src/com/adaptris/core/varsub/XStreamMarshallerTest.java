@@ -43,7 +43,8 @@ public class XStreamMarshallerTest extends BaseCase {
   }
 
   public void testUnmarshal_String() throws Exception {
-    Adapter adapter = (Adapter) createMarshaller().unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+    Adapter adapter = (Adapter) createMarshaller().withUseHostname(true)
+        .unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
     doStandardAssertions(adapter);
 
   }
