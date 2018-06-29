@@ -14,11 +14,11 @@ ivy.password=password
 ivy.repo=nexus-snapshots
 
 ##############################################################
-# Which version of adp-core do you want to depend on?
+# Which version of interlok-core do you want to depend on?
 # The default is the developer snapshot
 ##############################################################
 
-adp-core-version=3.0-SNAPSHOT
+interlok-core-version=3.0-SNAPSHOT
 
 ##############################################################
 # What is the version of this binary to publish to nexus?

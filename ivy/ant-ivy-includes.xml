@@ -223,13 +223,13 @@
         <ivy:retrieve pattern="@{destdir}/[artifact].[ext]" organisation="com.adaptris" conf="javadoc" type="javadoc" log="${ivy.logging}"/>
         <if>
           <and>
-            <available file="@{destdir}/adp-core.jar"/>
+            <available file="@{destdir}/interlok-core.jar"/>
             <available file="@{destdir}/interlok-common.jar"/>
           </and>
           <then>
             <mkdir dir="@{destdir}/interlok-common"/>
-            <mkdir dir="@{destdir}/adp-core"/>
-            <unzip src="@{destdir}/adp-core.jar" dest="@{destdir}/adp-core">
+            <mkdir dir="@{destdir}/interlok-core"/>
+            <unzip src="@{destdir}/interlok-core.jar" dest="@{destdir}/interlok-core">
               <patternset>
                 <include name="**/package-list"/>
               </patternset>            
@@ -269,7 +269,7 @@
           </classpath>
           <custom-doclet/>
           <grouping/>
-          <link offline="${offline.javadocs.available}" href="${interlok-api.javadoc.url}" packagelistLoc="${build.dir}/offline-javadocs/adp-core"/>
+          <link offline="${offline.javadocs.available}" href="${interlok-api.javadoc.url}" packagelistLoc="${build.dir}/offline-javadocs/interlok-core"/>
           <link offline="${offline.javadocs.available}" href="${interlok-common.javadoc.url}" packagelistLoc="${build.dir}/offline-javadocs/interlok-common"/>
           <taglet name="com.adaptris.taglet.ConfigTaglet">
             <path refid="classpath.ant-tools"/>

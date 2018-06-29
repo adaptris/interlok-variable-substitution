@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
-  <info organisation="com.adaptris" module="adp-varsub" revision="${ivy.publish.revision}" status="release"/>
+  <info organisation="com.adaptris" module="interlok-varsub" revision="${ivy.publish.revision}" status="release"/>
 
   <configurations>
     <conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>
@@ -19,18 +19,18 @@
   </configurations>
 
   <publications>
-     <artifact name="adp-varsub" type="jar" ext="jar"/>
-     <artifact name="adp-varsub" type="pom" ext="pom"/>
+     <artifact name="interlok-varsub" type="jar" ext="jar"/>
+     <artifact name="interlok-varsub" type="pom" ext="pom"/>
 
      <artifact type="javadoc" ext="jar" conf="javadoc" m:classifier="javadoc"/>
   </publications>
 
   <dependencies>
-    <dependency org="com.adaptris" name="adp-core" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="interlok-common" rev="${adp-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
-    <dependency org="com.adaptris" name="adp-stubs" rev="${adp-core-version}" changing="true" conf="test->default"/>
-    <dependency org="com.adaptris" name="adp-core-apt" rev="${adp-core-version}" conf="compile->default;ant->default" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-core" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-common" rev="${interlok-core-version}" conf="compile->default;javadoc->javadoc" changing="true"/>
+    <dependency org="com.adaptris" name="interlok-stubs" rev="${interlok-core-version}" changing="true" conf="test->default"/>
+    <dependency org="com.adaptris" name="interlok-core-apt" rev="${interlok-core-version}" conf="compile->default;ant->default" changing="true"/>
 
     <dependency org="org.apache.velocity" name="velocity" rev="1.7" transitive="false" conf="compile->default"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="1.7.12" conf="compile->default" />
