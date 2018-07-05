@@ -126,7 +126,7 @@ task copyUnitTestProperties(type: Copy) {
 }
 
 task copyTestData(type: Copy) {
-    from file('src/test/resources/xinclude')
+    from file('src/test/resources/var-sub')
     into (testDataDir)
     filter(ReplaceTokens, tokens: [TEST_DATA_DIR: testDataDir.getCanonicalPath().replaceAll("\\\\", "/")])
 }
