@@ -8,19 +8,13 @@ import static com.adaptris.core.varsub.Constants.SYSPROP_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.SYSPROP_PREFIX_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.adaptris.core.CoreException;
-import com.adaptris.core.config.ConfigPreProcessorImpl;
 import com.adaptris.core.management.BootstrapProperties;
-import com.adaptris.core.util.ExceptionHelper;
 import com.adaptris.util.KeyValuePairSet;
 
 /**
@@ -75,7 +69,7 @@ import com.adaptris.util.KeyValuePairSet;
  * 
  * @since 3.0.1
  */
-public class SystemPropertiesPreProcessor extends ConfigPreProcessorImpl {
+public class SystemPropertiesPreProcessor extends VariablePreProcessorImpl {
 
   private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -89,31 +83,7 @@ public class SystemPropertiesPreProcessor extends ConfigPreProcessorImpl {
 
 
   @Override
-  public String process(String xml) throws CoreException {
-    String result = xml;
-    try {
-      result = expand(xml);
-    }
-    catch (Exception e) {
-      ExceptionHelper.rethrowCoreException(e);
-    }
-    return result;
-  }
-
-  @Override
-  public String process(URL urlToXml) throws CoreException {
-    String result = null;
-    try (InputStream inputStream = urlToXml.openConnection().getInputStream()) {
-      String xml = IOUtils.toString(inputStream);
-      result = expand(xml);
-    }
-    catch (IOException ex) {
-      ExceptionHelper.rethrowCoreException(ex);
-    }
-    return result;
-  }
-
-  String expand(String xml) throws CoreException {
+  protected String expand(String xml) throws CoreException {
     Properties cfg = getProperties();
     String varSubImpl = defaultIfBlank(cfg.getProperty(SYSPROP_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(SYSPROP_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
