@@ -1,5 +1,5 @@
-junit.varsub.variables.adapter.xml=${test.data.dir}/variables-adapter.xml
-junit.varsub.variables.properties=file:///${test.data.dir}/sample-variable-substitutions.properties
-junit.varsub.sysprop.adapter.xml=${test.data.dir}/sysprops-adapter.xml
-junit.varsub.environment.adapter.xml=${test.data.dir}/environment-adapter.xml
-junit.varsub.missing.variables.properties=file:///${test.data.dir}/sample-missing-variable-substitutions.properties
+varsub.variables.adapter.xml=@TEST_DATA_DIR@/variables-adapter.xml
+varsub.variables.properties=file:///@TEST_DATA_DIR@/sample-variable-substitutions.properties
+varsub.sysprop.adapter.xml=@TEST_DATA_DIR@/sysprops-adapter.xml
+varsub.environment.adapter.xml=@TEST_DATA_DIR@/environment-adapter.xml
+varsub.missing.variables.properties=file:///@TEST_DATA_DIR@/sample-missing-variable-substitutions.properties
