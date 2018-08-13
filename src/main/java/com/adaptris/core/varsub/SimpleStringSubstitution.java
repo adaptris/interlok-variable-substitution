@@ -38,16 +38,17 @@ class SimpleStringSubstitution extends VariableSubstitutable {
   String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
       throws CoreException {
     Set<String> keySet = variableSubs.stringPropertyNames();
+    String substitute = input;
     log.trace("Performing configuration variable substitution");
     for (String key : keySet) {
       String variable = variablePrefix + key + variablePostFix;
       if (verboseMode) {
         log.trace("Replacing {} with {}", variable, variableSubs.getProperty(key));
       }
-      input = input.replace(variable, variableSubs.getProperty(key));
+      substitute = substitute.replace(variable, variableSubs.getProperty(key));
     }
-    validateSubstitutions(input, variablePrefix, variablePostFix);
-    return input;
+    validateSubstitutions(substitute, variablePrefix, variablePostFix);
+    return substitute;
   }
 
   private void validateSubstitutions(String input, String variablePrefix, String variablePostFix) throws CoreException {
