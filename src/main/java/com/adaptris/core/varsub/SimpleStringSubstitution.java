@@ -18,7 +18,7 @@ import com.adaptris.core.CoreException;
  * @author amcgrath
  */
 
-class SimpleStringSubstitution extends VariableSubstitutable {
+public class SimpleStringSubstitution extends VariableSubstitutable {
 
   private transient Logger log = LoggerFactory.getLogger("VariableSubstitution");
   private transient boolean strictMode = false;
@@ -35,7 +35,7 @@ class SimpleStringSubstitution extends VariableSubstitutable {
 
 
   @Override
-  String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
+  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
       throws CoreException {
     Set<String> keySet = variableSubs.stringPropertyNames();
     String substitute = input;

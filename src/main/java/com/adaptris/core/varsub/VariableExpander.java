@@ -44,17 +44,17 @@ adapter.d96a.dir.out=d96a-out
  * @author lchan
  * 
  */
-class VariableExpander {
+public class VariableExpander {
 
   private String varPrefix;
   private String varSuffix;
 
-  VariableExpander(String prefix, String suffix) {
+  public VariableExpander(String prefix, String suffix) {
     setVarPrefix(prefix);
     setVarSuffix(suffix);
   }
 
-  Properties resolve(Properties input) throws CoreException {
+  public Properties resolve(Properties input) throws CoreException {
     Properties resolved = resolveCustom(input);
     Properties result = new Properties();
     Properties sysProps = System.getProperties();
