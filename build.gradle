@@ -230,6 +230,7 @@ spotbugs {
 
   // We only care about "high priority" issues...
   reportLevel = "high"
+  includeFilter = new File("$rootDir/gradle/spotbugs-filter.xml")
 }
 
 // disable spotbugsTests which checks our test code..
