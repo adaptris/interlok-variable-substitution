@@ -10,7 +10,7 @@
            Default encoding bugs
            Name shadowing since it's fine that XStreamMarshaller does shadow.
       -->
-      <Bug code="Dm,Nm" />
+      <Bug pattern="DM_DEFAULT_ENCODING,NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
     </Not>
   </Match>
 
