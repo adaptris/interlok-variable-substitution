@@ -6,7 +6,6 @@ import static com.adaptris.core.varsub.Constants.VARSUB_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_PREFIX_KEY;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,14 +16,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.validation.constraints.NotNull;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.InputFieldDefault;
@@ -86,15 +82,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   public Object unmarshal(Reader in) throws CoreException {
     Args.notNull(in, "reader");
     Object result = null;
-    try {
-      String xml = IOUtils.toString(in);
+    try (Reader autoClose = in) {
+      String xml = IOUtils.toString(autoClose);
       result = unmarshal(xml);
     }
     catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
-    }
-    finally {
-      IOUtils.closeQuietly(in);
     }
     return result;
   }
@@ -110,8 +103,8 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   public Object unmarshal(File file) throws CoreException {
     Args.notNull(file, "file");
     Object result = null;
-    try  {
-      result = unmarshal(new FileInputStream(file));
+    try (InputStream autoClose = new FileInputStream(file)) {
+      result = unmarshal(autoClose);
     }
     catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
@@ -123,8 +116,8 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   public Object unmarshal(URL url) throws CoreException {
     Args.notNull(url, "url");
     Object result = null;
-    try {
-      result = this.unmarshal(url.openStream());
+    try (InputStream autoClose = url.openStream()) {
+      result = this.unmarshal(autoClose);
     }
     catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
@@ -154,15 +147,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   public Object unmarshal(InputStream in) throws CoreException {
     Args.notNull(in, "inputstream");
     Object result = null;
-    try {
-      String xml = IOUtils.toString(in);
+    try (InputStream autoClose = in) {
+      String xml = IOUtils.toString(autoClose);
       result = unmarshal(xml);
     }
     catch (IOException e) {
       throw ExceptionHelper.wrapCoreException(e);
-    }
-    finally {
-      IOUtils.closeQuietly(in);
     }
     return result;
   }
