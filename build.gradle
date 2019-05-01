@@ -7,7 +7,7 @@ plugins {
   id 'jacoco'
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '4.0.1'
-  id 'com.github.spotbugs' version '1.6.10'
+  id 'com.github.spotbugs' version '1.7.1'
 }
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.9-SNAPSHOT'
