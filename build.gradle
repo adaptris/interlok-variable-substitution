@@ -26,7 +26,7 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.26'
-  log4j2Version = '2.11.2'
+  log4j2Version = '2.12.1'
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
@@ -203,10 +203,11 @@ publishing {
 
       pom.withXml {
         asNode().appendNode("description", "SystemProperty / Environment / Variable substitution Config Pre-processors")
+        asNode().appendNode("name", componentName)
         def properties = asNode().appendNode("properties")
         properties.appendNode("url", "https://interlok.adaptris.net/interlok-docs/advanced-configuration-pre-processors.html")
         properties.appendNode("target", "3.8.0+")
-        properties.appendNode("tags", "xinclude,xslt")
+        properties.appendNode("tags", "xinclude,xslt,environment,system-properties,variables")
         properties.appendNode("license", "false")
       }
     }
