@@ -1,17 +1,18 @@
 package com.adaptris.core.varsub;
 
+import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.Properties;
-
 import org.apache.commons.io.IOUtils;
-
+import org.junit.Before;
+import org.junit.Test;
 import com.adaptris.core.Adapter;
+import com.adaptris.core.BaseCase;
 import com.adaptris.core.DefaultMarshaller;
-import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
 
-public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
+public class EnvironmentVariablesPreProcessorTest extends BaseCase {
   private static final String KEY_ENV_ADAPTER_XML = "varsub.environment.adapter.xml";
 
   private EnvironmentVariablesPreProcessor preProcessor;
@@ -19,16 +20,12 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
   private Properties bootstrapProperties;
   private File adapterXmlFile;
 
-  public EnvironmentVariablesPreProcessorTest(String name) {
-    super(name);
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
-
-  public void tearDown() throws Exception {
-    super.tearDown();
-  }
-  
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
     adapterXmlFile = new File(PROPERTIES.getProperty(KEY_ENV_ADAPTER_XML));
     bootstrapProperties = new Properties();
     bootstrapProperties.put(Constants.SYSPROP_PREFIX_KEY, Constants.DEFAULT_VARIABLE_PREFIX);
@@ -38,6 +35,7 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
     preProcessor = new EnvironmentVariablesPreProcessor(new JunitBootstrapProperties(bootstrapProperties));
   }
   
+  @Test
   public void testEnvironmentVariableReplacement_URL() throws Exception {
     EnvironmentVariablesPreProcessor myProcessor = new EnvironmentVariablesPreProcessor(
         new KeyValuePairSet(bootstrapProperties));
@@ -48,6 +46,7 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
   
+  @Test
   public void testEnvironmentVariableReplacement_String() throws Exception {
 
     String xml = preProcessor.process(IOUtils.toString(adapterXmlFile.toURI().toURL()));
@@ -56,6 +55,7 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
   
+  @Test
   public void testEnvironmentVariableReplacement_NoPrefix() throws Exception {
     
     // Remove the property - should use the default, which happens to be the same anyway....
@@ -69,6 +69,7 @@ public class EnvironmentVariablesPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  @Test
   public void testEnvironmentVariableReplacement_NoPostfix() throws Exception {
 
     // Remove the property - should use the default, which happens to be the same anyway....

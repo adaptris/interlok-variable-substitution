@@ -1,26 +1,25 @@
 package com.adaptris.core.varsub;
-
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_MISSING_SUBSTITUTION_PROPERTIES;
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_SUBSTITUTION_PROPERTIES;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.util.Properties;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
 import com.adaptris.core.Adapter;
+import com.adaptris.core.BaseCase;
 import com.adaptris.core.DefaultMarshaller;
-import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
 
-public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
+public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
   private static final String PROPS_VARIABLES_ADAPTER = "varsub.variables.adapter.xml";
   
@@ -33,16 +32,13 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   private Properties sampleBootstrapProperties;
   
-  public VariableSubstitutionPreProcessorTest(String name) {
-    super(name);
-  }
-
-  public void tearDown() throws Exception {
-    super.tearDown();
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
   
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
     
     MockitoAnnotations.initMocks(this);
     
@@ -58,6 +54,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     preProcessor.setPropertyFileLoader(propertyFileLoader);
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistry() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
@@ -69,6 +66,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistry_String() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
@@ -80,6 +78,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
 
+  @Test
   public void testSimpleVarSubAdapterRegistryWithProperPropertiesFile() throws Exception {
 
     Properties myBootstrapProperties = new Properties();
@@ -98,6 +97,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistry_NestedVariables() throws Exception {
     Properties myVarSubs = new Properties();
     myVarSubs.put("my.adapter", "MyAdapter");
@@ -122,6 +122,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
 
+  @Test
   public void testSimpleVarSubAdapterRegistry_UnresolvableNestedVariables() throws Exception {
     Properties myVarSubs = new Properties();
     myVarSubs.put("Channel", "Channel");
@@ -143,6 +144,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals("${my.adapter}ID", adapter.getUniqueId());
   }
 
+  @Test
   public void testSimpleVarSubAdapterRegistry_SystemPropertiesVariables() throws Exception {
     Properties myVarSubs = new Properties();
     myVarSubs.put("Channel", "Channel");
@@ -165,6 +167,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals(javaHome + "ID", adapter.getUniqueId());
   }
 
+  @Test
   public void testSimpleVarSubAdapterRegistry_EnvironmentVariables() throws Exception {
     Properties myVarSubs = new Properties();
     myVarSubs.put("Channel", "Channel");
@@ -187,6 +190,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals(path, adapter.getUniqueId());
   }
 
+  @Test
   public void testSimpleVarSubAdapterRegistryNoPropertyURL() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
@@ -201,6 +205,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
     assertEquals(FileUtils.readFileToString(variablesAdapterFile), adapterXml);
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistryNoPrefix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
@@ -217,6 +222,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistryNoPostfix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
@@ -233,6 +239,7 @@ public class VariableSubstitutionPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  @Test
   public void testSimpleVarSubAdapterRegistryOnly1Match() throws Exception {
     Properties variableSubstitutions = createProperties();
     variableSubstitutions.remove("adapter.id");
