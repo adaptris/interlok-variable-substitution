@@ -5,7 +5,7 @@ import static com.adaptris.core.varsub.Constants.DEFAULT_VARIABLE_PREFIX;
 import static com.adaptris.core.varsub.Constants.VARSUB_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_PREFIX_KEY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
