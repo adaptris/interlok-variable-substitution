@@ -6,7 +6,7 @@ import static com.adaptris.core.varsub.Constants.DEFAULT_VAR_SUB_IMPL;
 import static com.adaptris.core.varsub.Constants.ENVVAR_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.ENVVAR_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.ENVVAR_PREFIX_KEY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.util.Properties;
 

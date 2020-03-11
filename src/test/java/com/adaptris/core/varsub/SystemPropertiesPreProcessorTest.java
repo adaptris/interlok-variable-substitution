@@ -1,17 +1,18 @@
 package com.adaptris.core.varsub;
 
+import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.Properties;
-
 import org.apache.commons.io.IOUtils;
-
+import org.junit.Before;
+import org.junit.Test;
 import com.adaptris.core.Adapter;
+import com.adaptris.core.BaseCase;
 import com.adaptris.core.DefaultMarshaller;
-import com.adaptris.core.runtime.ComponentManagerCase;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
 
-public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
+public class SystemPropertiesPreProcessorTest extends BaseCase {
   private static final String KEY_SYSPROP_ADAPTER_XML = "varsub.sysprop.adapter.xml";
 
   private SystemPropertiesPreProcessor preProcessor;
@@ -19,16 +20,13 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
   private Properties bootstrapProperties;
   private File adapterXmlFile;
 
-  public SystemPropertiesPreProcessorTest(String name) {
-    super(name);
-  }
-
-  public void tearDown() throws Exception {
-    super.tearDown();
+  @Override
+  public boolean isAnnotatedForJunit4() {
+    return true;
   }
   
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
     adapterXmlFile = new File(PROPERTIES.getProperty(KEY_SYSPROP_ADAPTER_XML));
     bootstrapProperties = new Properties();
     bootstrapProperties.put(Constants.SYSPROP_PREFIX_KEY, Constants.DEFAULT_VARIABLE_PREFIX);
@@ -38,6 +36,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
     preProcessor = new SystemPropertiesPreProcessor(new JunitBootstrapProperties(bootstrapProperties));
   }
   
+  @Test
   public void testSystemPropertyReplacement_URL() throws Exception {
     SystemPropertiesPreProcessor myProcessor = new SystemPropertiesPreProcessor(new KeyValuePairSet(bootstrapProperties));
     String xml = myProcessor.process(adapterXmlFile.toURI().toURL());
@@ -46,6 +45,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
   
+  @Test
   public void testSystemPropertyReplacement_String() throws Exception {
 
     String xml = preProcessor.process(IOUtils.toString(adapterXmlFile.toURI().toURL()));
@@ -54,6 +54,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
     doStandardAssertions(adapter);
   }
   
+  @Test
   public void testSystemPropertyReplacement_NoPrefix() throws Exception {
     
     // Remove the property - should use the default, which happens to be the same anyway....
@@ -67,6 +68,7 @@ public class SystemPropertiesPreProcessorTest extends ComponentManagerCase {
 
   }
   
+  @Test
   public void testSystemPropertyReplacement_NoPostfix() throws Exception {
 
     // Remove the property - should use the default, which happens to be the same anyway....
