@@ -8,7 +8,7 @@ plugins {
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '5.0.3'
   id 'com.github.spotbugs' version '4.5.1'
-  id 'org.owasp.dependencycheck' version '6.0.2'
+  id 'org.owasp.dependencycheck' version '6.0.3'
 }
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.11-SNAPSHOT'
