@@ -62,7 +62,6 @@ public class VariableExpander {
       Properties environment = PropertyFileLoader.getEnvironment();
       for (String key : resolved.stringPropertyNames()) {
         String value = resolved.getProperty(key);
-        value = handleExpansion(key, value, resolved);
         log.trace("Initial key [{}], value[{}]", key, value);
         // Loop through and sort out all the defined variables first.
         value = handleExpansion(key, value, resolved);
