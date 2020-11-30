@@ -1,18 +1,22 @@
 package com.adaptris.core.varsub;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Constants used by various pre-processors.
- * 
+ *
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
   /**
    * The default variable prefix, {@value #DEFAULT_VARIABLE_PREFIX}
-   * 
+   *
    */
   public static final String DEFAULT_VARIABLE_PREFIX = "${";
   /**
    * The default variable postfix, {@value #DEFAULT_VARIABLE_POSTFIX}
-   * 
+   *
    */
   public static final String DEFAULT_VARIABLE_POSTFIX = "}";
 
@@ -23,19 +27,19 @@ public class Constants {
 
   /**
    * The key in configuration controlling the prefix: {@value #VARSUB_PREFIX_KEY}, defaults to {@value #DEFAULT_VARIABLE_PREFIX}
-   * 
+   *
    */
   public static final String VARSUB_PREFIX_KEY = "variable-substitution.varprefix";
   /**
    * The key in configuration controlling the prefix, {@value #VARSUB_POSTFIX_KEY}, defaults to {@value #DEFAULT_VARIABLE_POSTFIX}
-   * 
+   *
    */
   public static final String VARSUB_POSTFIX_KEY = "variable-substitution.varpostfix";
 
   /**
    * The key in configuration defining the properties file where variables are defined:
    * {@value #VARSUB_PROPERTIES_URL_KEY}.
-   * 
+   *
    */
   public static final String VARSUB_PROPERTIES_URL_KEY = "variable-substitution.properties.url";
 
@@ -55,12 +59,12 @@ public class Constants {
 
   /**
    * The key in configuration controlling the prefix: {@value #SYSPROP_PREFIX_KEY}
-   * 
+   *
    */
   public static final String SYSPROP_PREFIX_KEY = "system-properties.varprefix";
   /**
    * The key in configuration controlling the prefix: {@value #SYSPROP_POSTFIX_KEY}
-   * 
+   *
    */
   public static final String SYSPROP_POSTFIX_KEY = "system-properties.varpostfix";
 
@@ -71,18 +75,18 @@ public class Constants {
 
   /**
    * The key in configuration controlling the prefix: {@value #ENVVAR_PREFIX_KEY}
-   * 
+   *
    */
   public static final String ENVVAR_PREFIX_KEY = "environment-variables.varprefix";
   /**
    * The key in configuration controlling the prefix: {@value #ENVVAR_POSTFIX_KEY}
-   * 
+   *
    */
   public static final String ENVVAR_POSTFIX_KEY = "environment-variables.varpostfix";
 
   /**
    * The key in configuration controlling the substitution method: {@value #ENVVAR_IMPL_KEY}, defaults to {@code SIMPLE}
-   * 
+   *
    */
   public static final String ENVVAR_IMPL_KEY = "environment-variables.impl";
 }

@@ -2,8 +2,8 @@ package com.adaptris.core.varsub;
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_MISSING_SUBSTITUTION_PROPERTIES;
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_SUBSTITUTION_PROPERTIES;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import java.io.File;
 import java.util.Properties;
@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.adaptris.core.Adapter;
 import com.adaptris.core.BaseCase;
+import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
@@ -22,26 +23,26 @@ import com.adaptris.util.KeyValuePairSet;
 public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
   private static final String PROPS_VARIABLES_ADAPTER = "varsub.variables.adapter.xml";
-  
+
   private File variablesAdapterFile;
-  
+
   @Mock
   private PropertyFileLoader propertyFileLoader;
-  
+
   private VariableSubstitutionPreProcessor preProcessor;
 
   private Properties sampleBootstrapProperties;
-  
+
   @Override
   public boolean isAnnotatedForJunit4() {
     return true;
   }
-  
+
   @Before
   public void setUp() throws Exception {
-    
+
     MockitoAnnotations.initMocks(this);
-    
+
     variablesAdapterFile = new File(PROPERTIES.getProperty(PROPS_VARIABLES_ADAPTER));
 
     sampleBootstrapProperties = new Properties();
@@ -49,23 +50,23 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     sampleBootstrapProperties.put("variable-substitution.varpostfix", "}");
     sampleBootstrapProperties.put("variable-substitution.impl", VariableSubstitutionType.SIMPLE.name());
     sampleBootstrapProperties.put("variable-substitution.properties.url", "dummy-url-using-mocks-instead");
-    
+
     preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
     preProcessor.setPropertyFileLoader(propertyFileLoader);
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistry() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    
+
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
-    
+
     doStandardAssertions(adapter);
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistry_String() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
@@ -83,7 +84,7 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
     Properties myBootstrapProperties = new Properties();
     myBootstrapProperties.put(Constants.VARSUB_PROPERTIES_USE_HOSTNAME, "true");
-    
+
     myBootstrapProperties.put("variable-substitution.properties.url.1", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
     myBootstrapProperties.put("variable-substitution.properties.url.2",
         PROPERTIES.getProperty(SAMPLE_MISSING_SUBSTITUTION_PROPERTIES));
@@ -92,11 +93,11 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
     String xml = myPreProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
-    
+
     doStandardAssertions(adapter);
 
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistry_NestedVariables() throws Exception {
     Properties myVarSubs = new Properties();
@@ -195,67 +196,76 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    
+
     // Remove the property - no substitution should take place.
     sampleBootstrapProperties.remove("variable-substitution.properties.url");
     preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
-    
+
     String adapterXml = preProcessor.process(variablesAdapterFile.toURI().toURL());
-    
+
     assertEquals(FileUtils.readFileToString(variablesAdapterFile), adapterXml);
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistryNoPrefix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    
+
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varprefix");
     preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
-    
+
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
-    
+
     doStandardAssertions(adapter);
 
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistryNoPostfix() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    
+
     // Remove the property - should use the default, which happens to be the same anyway....
     sampleBootstrapProperties.remove("variable-substitution.varpostfix");
     preProcessor.setProperties(new JunitBootstrapProperties(sampleBootstrapProperties));
-    
+
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
-    
+
     doStandardAssertions(adapter);
 
   }
-  
+
   @Test
   public void testSimpleVarSubAdapterRegistryOnly1Match() throws Exception {
     Properties variableSubstitutions = createProperties();
     variableSubstitutions.remove("adapter.id");
     variableSubstitutions.remove("channel.id");
     variableSubstitutions.remove("workflow.id1");
-    
+
  // We don't actually want to go to the file system for the variable substitutions
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    
+
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
-    
+
     assertEquals("${adapter.id}", adapter.getUniqueId());
     assertEquals("${channel.id}", adapter.getChannelList().get(0).getUniqueId());
     assertEquals("${workflow.id1}", adapter.getChannelList().get(0).getWorkflowList().get(0).getUniqueId());
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
+  }
+
+  @Test(expected = CoreException.class)
+  public void testSelfReferentialVariables() throws Exception {
+    // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
+    variableSubstitutions.setProperty("SELF_REFERENTIAL", "${SELF_REFERENTIAL}");
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
+    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
   }
 
   private void doStandardAssertions(Adapter adapter) {

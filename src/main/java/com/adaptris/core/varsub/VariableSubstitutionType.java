@@ -1,15 +1,18 @@
 package com.adaptris.core.varsub;
 
+import com.adaptris.annotation.Removal;
 
 public enum VariableSubstitutionType {
-  
+
   SIMPLE() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution();
     }
   },
-  @Deprecated simple() {
+  @Deprecated
+  @Removal(version = "4.0.0")
+  simple() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution();
@@ -21,7 +24,9 @@ public enum VariableSubstitutionType {
       return new SimpleStringSubstitution(true, false);
     }
   },
-  @Deprecated simpleWithLogging() {
+  @Deprecated
+  @Removal(version = "4.0.0")
+  simpleWithLogging() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution(true, false);
@@ -33,7 +38,9 @@ public enum VariableSubstitutionType {
       return new SimpleStringSubstitution(false, true);
     }
   },
-  @Deprecated strict() {
+  @Deprecated
+  @Removal(version = "4.0.0")
+  strict() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution(false, true);
@@ -45,13 +52,15 @@ public enum VariableSubstitutionType {
       return new SimpleStringSubstitution(true, true);
     }
   },
-  @Deprecated strictWithLogging() {
+  @Deprecated
+  @Removal(version = "4.0.0")
+  strictWithLogging() {
     @Override
     VariableSubstitutable create() {
       return new SimpleStringSubstitution(true, true);
     }
   };
-  
+
   abstract VariableSubstitutable create();
-  
+
 }

@@ -7,8 +7,9 @@ plugins {
   id 'jacoco'
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '5.0.3'
-  id 'com.github.spotbugs' version '4.5.0'
-  id 'org.owasp.dependencycheck' version '5.3.2.1'
+  id 'com.github.spotbugs' version '4.5.1'
+  id 'org.owasp.dependencycheck' version '6.0.3'
+  id "io.freefair.lombok" version "5.3.0"
 }
 ext {
   interlokCoreVersion = project.hasProperty('interlokCoreVersion') ? project.getProperty('interlokCoreVersion') : '3.11-SNAPSHOT'
@@ -20,6 +21,7 @@ ext {
   repoPassword = project.hasProperty('repoPassword') ? project.getProperty('repoPassword') : 'unknown'
   defaultNexusRepo = project.hasProperty('defaultNexusRepo') ? project.getProperty('defaultNexusRepo') : 'https://repo1.maven.org/maven2/'
   offlineJavadocPackageDir = new File(project.buildDir, "offline-javadoc-packages")
+  delombokTargetDir = new File("${project.projectDir}/src/main/generated")
 
   interlokJavadocs= project.hasProperty('interlokJavadocs') ? project.getProperty('interlokJavadocs') : javadocsBaseUrl + "/interlok-core/" + interlokCoreVersion
   interlokCommonJavadocs= project.hasProperty('interlokCommonJavadocs') ? project.getProperty('interlokCommonJavadocs') : javadocsBaseUrl + "/interlok-common/" + interlokCoreVersion
@@ -27,6 +29,10 @@ ext {
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
   slf4jVersion = '1.7.30'
+}
+
+ext.testResourcesDir = { ->
+  return "${project.projectDir}/src/test/resources".replaceAll("\\\\", "/")
 }
 
 if (JavaVersion.current().isJava8Compatible()) {
@@ -60,6 +66,7 @@ group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
 def testDataDir = new File(project.buildDir, "testdata")
+generateLombokConfig.enabled = false
 
 repositories {
   mavenCentral()
@@ -98,7 +105,7 @@ dependencies {
 
   annotationProcessor ("com.adaptris:interlok-core-apt:$interlokCoreVersion") {changing= true}
 
-  testCompile ('junit:junit:4.13')
+  testCompile ('junit:junit:4.13.1')
   testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
   // exclude any log4j dependencies so that we can just use slf4j simple.
   // works around INTERLOk-3233
@@ -106,8 +113,8 @@ dependencies {
     changing= true
     exclude group: "org.apache.logging.log4j"
   }
-  testCompile ("org.mockito:mockito-core:3.5.9")
-  testCompile ("org.mockito:mockito-inline:3.5.9")
+  testCompile ("org.mockito:mockito-core:3.6.0")
+  testCompile ("org.mockito:mockito-inline:3.6.0")
 
   javadoc("com.adaptris:interlok-core-apt:$interlokCoreVersion") { changing= true}
   offlineJavadocPackages ("com.adaptris:interlok-core:$interlokCoreVersion:javadoc@jar") { changing= true}
@@ -181,8 +188,8 @@ task copyTestData(type: Copy) {
     filter(ReplaceTokens, tokens: [TEST_DATA_DIR: testDataDir.getCanonicalPath().replaceAll("\\\\", "/")])
 }
 
-task deleteUnitTestProperties(type: Delete) {
-    delete file('src/test/resources/unit-tests.properties')
+task deleteGeneratedFiles(type: Delete) {
+  delete file(testResourcesDir() + "/unit-tests.properties"), delombokTargetDir
 }
 
 javadoc {
@@ -209,7 +216,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.allSource
+    from sourceSets.main.extensions.delombokTask
 }
 
 artifacts {
@@ -282,5 +289,5 @@ spotbugsTest.enabled = false
 
 check.dependsOn jacocoTestReport
 processTestResources.dependsOn copyUnitTestProperties, copyTestData
-clean.dependsOn deleteUnitTestProperties
+clean.dependsOn deleteGeneratedFiles
 javadoc.dependsOn offlinePackageList
