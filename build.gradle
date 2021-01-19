@@ -237,7 +237,7 @@ publishing {
         asNode().appendNode("description", "SystemProperty / Environment / Variable substitution Config Pre-processors")
         asNode().appendNode("name", componentName)
         def properties = asNode().appendNode("properties")
-        properties.appendNode("url", "https://interlok.adaptris.net/interlok-docs/advanced-configuration-pre-processors.html")
+        properties.appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/pages/advanced/advanced-configuration-pre-processors?id=variable-substitution")
         properties.appendNode("target", "3.8.0+")
         properties.appendNode("tags", "xinclude,xslt,environment,system-properties,variables")
         properties.appendNode("license", "false")
