@@ -2,12 +2,13 @@ package com.adaptris.core.varsub;
 
 import static org.junit.Assert.assertEquals;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.Adapter;
-import com.adaptris.core.BaseCase;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
@@ -19,11 +20,6 @@ public class SystemPropertiesPreProcessorTest extends BaseCase {
 
   private Properties bootstrapProperties;
   private File adapterXmlFile;
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
   
   @Before
   public void setUp() throws Exception {
@@ -48,7 +44,7 @@ public class SystemPropertiesPreProcessorTest extends BaseCase {
   @Test
   public void testSystemPropertyReplacement_String() throws Exception {
 
-    String xml = preProcessor.process(IOUtils.toString(adapterXmlFile.toURI().toURL()));
+    String xml = preProcessor.process(IOUtils.toString(adapterXmlFile.toURI().toURL(), Charset.defaultCharset()));
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);

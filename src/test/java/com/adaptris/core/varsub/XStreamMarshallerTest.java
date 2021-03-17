@@ -8,11 +8,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import com.adaptris.core.Adapter;
-import com.adaptris.core.BaseCase;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.util.GuidGenerator;
 import com.adaptris.util.URLString;
@@ -23,11 +25,6 @@ public class XStreamMarshallerTest extends BaseCase {
   private static final String SAMPLE_SUBSTITUTION_PROPERTIES = "varsub.variables.properties";
 
   private File variablesAdapterFile;
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Before
   public void setUp() throws Exception {
@@ -43,7 +40,7 @@ public class XStreamMarshallerTest extends BaseCase {
   @Test
   public void testUnmarshal_String() throws Exception {
     Adapter adapter = (Adapter) createMarshaller().withUseHostname(true)
-        .unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+        .unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
 
   }
@@ -165,7 +162,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   @Test
   public void testUnmarshal_NoSubstitution() throws Exception {
-    String xml = IOUtils.toString(variablesAdapterFile.toURI().toURL());
+    String xml = IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset());
     Adapter adapter = (Adapter) new XStreamMarshaller().unmarshal(xml);
     assertEquals("${adapter.id}", adapter.getUniqueId());
   }
@@ -175,7 +172,7 @@ public class XStreamMarshallerTest extends BaseCase {
     XStreamMarshaller marshaller = createMarshaller();
     marshaller.setVariablePrefix(Constants.DEFAULT_VARIABLE_PREFIX);
     marshaller.setVariablePostfix(Constants.DEFAULT_VARIABLE_POSTFIX);
-    Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+    Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
 
   }
@@ -184,7 +181,7 @@ public class XStreamMarshallerTest extends BaseCase {
   public void testUnmarshal_WithLogging() throws Exception {
     XStreamMarshaller marshaller = createMarshaller();
     marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE_WITH_LOGGING);
-    Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+    Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
 
   }

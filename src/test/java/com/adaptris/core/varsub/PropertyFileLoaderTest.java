@@ -6,18 +6,13 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 import org.junit.Test;
-import com.adaptris.core.BaseCase;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.URLString;
 
 public class PropertyFileLoaderTest extends BaseCase {
 
   public static final String SAMPLE_SUBSTITUTION_PROPERTIES = "varsub.variables.properties";
   public static final String SAMPLE_MISSING_SUBSTITUTION_PROPERTIES = "varsub.missing.variables.properties";
-
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
 
   @Test
   public void testLoad() throws Exception {

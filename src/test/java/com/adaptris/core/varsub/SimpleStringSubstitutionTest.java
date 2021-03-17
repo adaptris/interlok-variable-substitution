@@ -97,7 +97,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("fox", "fox");
     props.put("dog", "dog");
     try {
-      String substitution = VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "${", "}");
+      VariableSubstitutionType.SIMPLE.create().doSubstitution(testInput, props, "${", "}");
     } catch (CoreException e) {
       assertTrue(e.getMessage().contains("${over} is undefined"));
     }
@@ -108,7 +108,7 @@ public class SimpleStringSubstitutionTest extends TestCase {
     props.put("fox", "fox");
     props.put("dog", "dog");
     try {
-      String substitution = VariableSubstitutionType.SIMPLE_WITH_LOGGING.create().doSubstitution(testInput, props, "${", "}");
+      VariableSubstitutionType.SIMPLE_WITH_LOGGING.create().doSubstitution(testInput, props, "${", "}");
     } catch (CoreException e) {
       assertTrue(e.getMessage().contains("${over} is undefined"));
     }
