@@ -3,6 +3,7 @@ package com.adaptris.core.varsub;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
 
@@ -39,7 +40,7 @@ public abstract class VariablePreProcessorImpl extends ConfigPreProcessorImpl {
   public String process(URL urlToXml) throws CoreException {
     String result = null;
     try (InputStream inputStream = urlToXml.openConnection().getInputStream()) {
-      result = process(IOUtils.toString(inputStream));
+      result = process(IOUtils.toString(inputStream, Charset.defaultCharset()));
     }
     catch (IOException ex) {
       throw ExceptionHelper.wrapCoreException(ex);

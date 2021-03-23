@@ -6,15 +6,17 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.adaptris.core.Adapter;
-import com.adaptris.core.BaseCase;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
@@ -33,15 +35,11 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
   private Properties sampleBootstrapProperties;
 
-  @Override
-  public boolean isAnnotatedForJunit4() {
-    return true;
-  }
-
+  private AutoCloseable mocks;
+  
   @Before
   public void setUp() throws Exception {
-
-    MockitoAnnotations.initMocks(this);
+    mocks = MockitoAnnotations.openMocks(this);
 
     variablesAdapterFile = new File(PROPERTIES.getProperty(PROPS_VARIABLES_ADAPTER));
 
@@ -53,6 +51,11 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
     preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
     preProcessor.setPropertyFileLoader(propertyFileLoader);
+  }
+  
+  @After
+  public void tearDown() throws Exception {
+    mocks.close();
   }
 
   @Test
@@ -73,7 +76,7 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Properties variableSubstitutions = createProperties();
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
 
-    String xml = preProcessor.process(IOUtils.toString(variablesAdapterFile.toURI().toURL()));
+    String xml = preProcessor.process(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
@@ -203,7 +206,7 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
     String adapterXml = preProcessor.process(variablesAdapterFile.toURI().toURL());
 
-    assertEquals(FileUtils.readFileToString(variablesAdapterFile), adapterXml);
+    assertEquals(FileUtils.readFileToString(variablesAdapterFile, Charset.defaultCharset()), adapterXml);
   }
 
   @Test
@@ -265,7 +268,7 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Properties variableSubstitutions = createProperties();
     variableSubstitutions.setProperty("SELF_REFERENTIAL", "${SELF_REFERENTIAL}");
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    preProcessor.process(variablesAdapterFile.toURI().toURL());
   }
 
   private void doStandardAssertions(Adapter adapter) {
