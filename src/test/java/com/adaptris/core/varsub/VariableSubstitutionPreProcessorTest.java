@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,10 +35,11 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
   private Properties sampleBootstrapProperties;
 
+  private AutoCloseable mocks;
+  
   @Before
   public void setUp() throws Exception {
-
-    MockitoAnnotations.openMocks(this);
+    mocks = MockitoAnnotations.openMocks(this);
 
     variablesAdapterFile = new File(PROPERTIES.getProperty(PROPS_VARIABLES_ADAPTER));
 
@@ -49,6 +51,11 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
     preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
     preProcessor.setPropertyFileLoader(propertyFileLoader);
+  }
+  
+  @After
+  public void tearDown() throws Exception {
+    mocks.close();
   }
 
   @Test
