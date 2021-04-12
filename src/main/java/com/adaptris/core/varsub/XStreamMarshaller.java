@@ -6,6 +6,7 @@ import static com.adaptris.core.varsub.Constants.VARSUB_IMPL_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_POSTFIX_KEY;
 import static com.adaptris.core.varsub.Constants.VARSUB_PREFIX_KEY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,14 +14,16 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.InetAddress;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
 import javax.validation.constraints.NotNull;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import com.adaptris.annotation.AdvancedConfig;
 import com.adaptris.annotation.AutoPopulated;
 import com.adaptris.annotation.InputFieldDefault;
@@ -56,7 +59,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 @XStreamAlias("xstream-varsub-marshaller")
 public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
   private transient PropertyFileLoader loader = new PropertyFileLoader();
 
   @XStreamImplicit(itemFieldName = "variable-properties-url")
@@ -148,7 +150,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     Args.notNull(in, "inputstream");
     Object result = null;
     try (InputStream autoClose = in) {
-      String xml = IOUtils.toString(autoClose);
+      String xml = IOUtils.toString(autoClose, Charset.defaultCharset());
       result = unmarshal(xml);
     }
     catch (IOException e) {

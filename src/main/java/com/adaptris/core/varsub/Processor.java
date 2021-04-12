@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -39,7 +40,7 @@ class Processor {
   String process(URL urlToXml, Properties variables) throws CoreException {
     String result = null;
     try (InputStream inputStream = urlToXml.openConnection().getInputStream()) {
-      String xml = IOUtils.toString(inputStream);
+      String xml = IOUtils.toString(inputStream, Charset.defaultCharset());
       result = this.process(xml, variables);
     }
     catch (IOException ex) {

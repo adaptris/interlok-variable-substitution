@@ -10,9 +10,6 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.adaptris.core.CoreException;
 import com.adaptris.core.management.BootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
@@ -70,8 +67,6 @@ import com.adaptris.util.KeyValuePairSet;
  * @since 3.0.1
  */
 public class SystemPropertiesPreProcessor extends VariablePreProcessorImpl {
-
-  private transient Logger log = LoggerFactory.getLogger(this.getClass());
 
   public SystemPropertiesPreProcessor(BootstrapProperties bootstrapProperties) {
     super(bootstrapProperties);
