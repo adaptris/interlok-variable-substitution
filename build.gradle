@@ -29,8 +29,8 @@ ext {
   componentDesc="SystemProperty / Environment / Variable substitution Config Pre-processors"
   organizationName = "Adaptris Ltd"
   organizationUrl = "http://interlok.adaptris.net"
-  slf4jVersion = '1.7.30'
-  mockitoVersion = '3.11.1'
+  slf4jVersion = '1.7.31'
+  mockitoVersion = '3.11.2'
 }
 
 ext.testResourcesDir = { ->
