@@ -177,16 +177,19 @@ task offlinePackageList(type: Copy) {
   into offlineJavadocPackageDir
 }
 
-task copyUnitTestProperties(type: Copy) {
-    delete file('src/test/resources/unit-tests.properties')
-    from file('src/test/resources/unit-tests.properties.template')
-    into ('src/test/resources/')
-    rename { String fileName ->
-      fileName.replace('unit-tests.properties.template', 'unit-tests.properties')
+task copyUnitTestProperties() {
+  doLast {
+    delete file( testResourcesDir() + '/unit-tests.properties')
+    ant.copy(file: testResourcesDir() + "/unit-tests.properties.template",
+             tofile: testResourcesDir() + '/unit-tests.properties') {
+      filterset {
+         filter(token: "JAVA_HOME", value: System.getProperty("java.home").replaceAll("\\\\", "/"))
+         filter(token: "BASE_DIR", value: project.projectDir.getCanonicalPath().replaceAll("\\\\", "/"))
+         filter(token: "BUILD_DIR", value: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/"))
+         filter(token: "TEST_DATA_DIR", value: testDataDir.getCanonicalPath().replaceAll("\\\\", "/"))
+      }
     }
-    filter(ReplaceTokens, tokens: [TEST_DATA_DIR: testDataDir.getCanonicalPath().replaceAll("\\\\", "/")])
-    filter(ReplaceTokens, tokens: [BASE_DIR: project.rootDir.getCanonicalPath().replaceAll("\\\\", "/")])
-    filter(ReplaceTokens, tokens: [BUILD_DIR: project.buildDir.getCanonicalPath().replaceAll("\\\\", "/")])
+  }
 }
 
 task copyTestData(type: Copy) {
