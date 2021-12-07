@@ -255,8 +255,9 @@ publishing {
       artifact sourcesJar { classifier "sources" }
 
       pom.withXml {
-        asNode().appendNode("description", componentDesc)
         asNode().appendNode("name", componentName)
+		asNode().appendNode("description", componentDesc)
+		asNode().appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/")
         def properties = asNode().appendNode("properties")
         properties.appendNode("url", "https://interlok.adaptris.net/interlok-docs/#/pages/advanced/advanced-configuration-pre-processors?id=variable-substitution")
         properties.appendNode("target", "3.8.0+")
