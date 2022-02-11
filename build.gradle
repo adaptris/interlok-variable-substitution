@@ -8,7 +8,7 @@ plugins {
   id 'nebula.optional-base' version '7.0.0'
   id 'com.github.spotbugs' version '5.0.5'
   id 'org.owasp.dependencycheck' version '6.5.3'
-  id "io.freefair.lombok" version "6.3.0"
+  id "io.freefair.lombok" version "6.4.0"
 }
 ext {
   interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.4-SNAPSHOT'
