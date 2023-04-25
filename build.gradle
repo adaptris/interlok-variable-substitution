@@ -11,7 +11,7 @@ plugins {
   id "io.freefair.lombok" version "6.5.1"
 }
 ext {
-  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.8-SNAPSHOT'
+  interlokCoreVersion = project.findProperty('interlokCoreVersion') ?: '4.8.0-RELEASE'
   releaseVersion = project.findProperty('releaseVersion') ?: '4.8-SNAPSHOT'
   nexusBaseUrl = project.findProperty('nexusBaseUrl') ?: 'https://nexus.adaptris.net/nexus'
   mavenPublishUrl = project.findProperty('mavenPublishUrl') ?: nexusBaseUrl + '/content/repositories/snapshots'
