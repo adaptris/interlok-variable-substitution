@@ -38,23 +38,23 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * XStream version of {@link AdaptrisMarshaller} that supports variable substitutions when unmarshalling.
- * 
+ *
  * <p>
  * If the {@code variable-properties-url} is configured as {@code file:///.//path/to/my/variables.properties} and that contains
- * 
+ *
  * <pre>
  * <code>
  * broker.url=tcp://localhost:2506
  * broker.backup.url=tcp://my.host:2507
  * </code>
  * </pre>
- * 
- * Then all instances of<code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced as the input is read in,
- * but before the unmarshalling occurs.
+ *
+ * Then all instances of<code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced as the input is read in, but
+ * before the unmarshalling occurs.
  * </p>
- * 
+ *
  * @config xstream-varsub-marshaller
- * 
+ *
  */
 @XStreamAlias("xstream-varsub-marshaller")
 public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
@@ -87,8 +87,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     try (Reader autoClose = in) {
       String xml = IOUtils.toString(autoClose);
       result = unmarshal(xml);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -107,8 +106,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     Object result = null;
     try (InputStream autoClose = new FileInputStream(file)) {
       result = unmarshal(autoClose);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -120,8 +118,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     Object result = null;
     try (InputStream autoClose = url.openStream()) {
       result = this.unmarshal(autoClose);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -134,12 +131,10 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     try (InputStream in = URLHelper.connect(url)) {
       if (in != null) {
         result = this.unmarshal(in);
-      }
-      else {
+      } else {
         throw new CoreException("could not unmarshal component from [" + url + "]");
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -152,13 +147,11 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     try (InputStream autoClose = in) {
       String xml = IOUtils.toString(autoClose, Charset.defaultCharset());
       result = unmarshal(xml);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
   }
-
 
   private Properties loadSubstitutions() throws CoreException {
     Properties result = new Properties();
@@ -172,7 +165,6 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     }
     return result;
   }
-
 
   private Properties configAsProperties() {
     Properties config = new Properties();
@@ -188,17 +180,17 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   /**
    * Specify the file where the substitution properties are held.
-   * 
-   * @param list the urls (so it could be remote).
+   *
+   * @param list
+   *          the urls (so it could be remote).
    */
   public void setVariablePropertiesUrls(List<String> list) {
-    this.variablePropertiesUrls = Args.notNull(list, "variablePropertiesUrls");
+    variablePropertiesUrls = Args.notNull(list, "variablePropertiesUrls");
   }
 
   public void addVariablePropertiesUrls(String url) {
     variablePropertiesUrls.add(Args.notNull(url, "Variable Property URL"));
   }
-
 
   public String getVariablePrefix() {
     return variablePrefix;
@@ -206,11 +198,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   /**
    * Set the variable prefix.
-   * 
-   * @param prefix the prefix, defaults to {@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_PREFIX}
+   *
+   * @param prefix
+   *          the prefix, defaults to {@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_PREFIX}
    */
   public void setVariablePrefix(String prefix) {
-    this.variablePrefix = prefix;
+    variablePrefix = prefix;
   }
 
   String variablePrefix() {
@@ -223,11 +216,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   /**
    * Set the variable prefix.
-   * 
-   * @param suffix the suffix, defaults to {@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_POSTFIX}
+   *
+   * @param suffix
+   *          the suffix, defaults to {@value com.adaptris.core.varsub.Constants#DEFAULT_VARIABLE_POSTFIX}
    */
   public void setVariablePostfix(String suffix) {
-    this.variablePostfix = suffix;
+    variablePostfix = suffix;
   }
 
   String variableSuffix() {
@@ -240,11 +234,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   /**
    * Set the Substitution Type.
-   * 
-   * @param type the type, if not specified then {@link VariableSubstitutionType#SIMPLE}.
+   *
+   * @param type
+   *          the type, if not specified then {@link VariableSubstitutionType#SIMPLE}.
    */
   public void setSubstitutionType(VariableSubstitutionType type) {
-    this.substitutionType = type;
+    substitutionType = type;
   }
 
   VariableSubstitutionType substitutionImpl() {
@@ -257,12 +252,12 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
 
   /**
    * Whether or not to attempt to format the URL with the hostname.
-   * 
+   *
    * @param b
    * @see Constants#VARSUB_PROPERTIES_USE_HOSTNAME
    */
   public void setUseHostname(Boolean b) {
-    this.useHostname = b;
+    useHostname = b;
   }
 
   public XStreamMarshaller withUseHostname(Boolean b) {
@@ -273,4 +268,5 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   private boolean useHostname() {
     return BooleanUtils.toBooleanDefaultIfNull(getUseHostname(), false);
   }
+
 }

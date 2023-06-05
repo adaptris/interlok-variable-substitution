@@ -14,7 +14,7 @@ import com.adaptris.core.CoreException;
  * <p>
  * Implementation of {@link VariableSubstitutable}.
  * </p>
- * 
+ *
  * @author amcgrath
  */
 
@@ -33,10 +33,8 @@ public class SimpleStringSubstitution extends VariableSubstitutable {
     verboseMode = verbose;
   }
 
-
   @Override
-  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix)
-      throws CoreException {
+  public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix) throws CoreException {
     Set<String> keySet = variableSubs.stringPropertyNames();
     String substitute = input;
     log.trace("Performing configuration variable substitution");
@@ -63,7 +61,6 @@ public class SimpleStringSubstitution extends VariableSubstitutable {
       }
     }
   }
-
 
   private static Pattern buildPattern(String variablePrefix, String variablePostFix) {
     // This should give us : ^.*\Q${\E(\S*)\Q}\E.* which we can run in DOTALL mode.

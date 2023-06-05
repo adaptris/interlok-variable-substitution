@@ -42,10 +42,10 @@ class Processor {
     try (InputStream inputStream = urlToXml.openConnection().getInputStream()) {
       String xml = IOUtils.toString(inputStream, Charset.defaultCharset());
       result = this.process(xml, variables);
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       ExceptionHelper.rethrowCoreException(ex);
     }
     return result;
   }
+
 }

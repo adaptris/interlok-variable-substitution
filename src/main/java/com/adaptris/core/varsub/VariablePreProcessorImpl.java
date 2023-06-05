@@ -23,14 +23,12 @@ public abstract class VariablePreProcessorImpl extends ConfigPreProcessorImpl {
     super(kvps);
   }
 
-
   @Override
   public String process(String xml) throws CoreException {
     String result = xml;
     try {
       result = expand(xml);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -41,13 +39,12 @@ public abstract class VariablePreProcessorImpl extends ConfigPreProcessorImpl {
     String result = null;
     try (InputStream inputStream = urlToXml.openConnection().getInputStream()) {
       result = process(IOUtils.toString(inputStream, Charset.defaultCharset()));
-    }
-    catch (IOException ex) {
+    } catch (IOException ex) {
       throw ExceptionHelper.wrapCoreException(ex);
     }
     return result;
   }
 
-
   protected abstract String expand(String xml) throws Exception;
+
 }

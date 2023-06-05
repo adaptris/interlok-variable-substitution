@@ -1,7 +1,8 @@
 package com.adaptris.core.varsub;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -11,11 +12,12 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.adaptris.core.Adapter;
-import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.core.CoreException;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.GuidGenerator;
 import com.adaptris.util.URLString;
 
@@ -26,7 +28,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   private File variablesAdapterFile;
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     variablesAdapterFile = new File(PROPERTIES.getProperty(PROPS_VARIABLES_ADAPTER));
   }
@@ -42,14 +44,12 @@ public class XStreamMarshallerTest extends BaseCase {
     Adapter adapter = (Adapter) createMarshaller().withUseHostname(true)
         .unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
-
   }
 
   @Test
   public void testUnmarshal_File() throws Exception {
     Adapter adapter = (Adapter) createMarshaller().unmarshal(variablesAdapterFile);
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -57,9 +57,7 @@ public class XStreamMarshallerTest extends BaseCase {
     try {
       createMarshaller().unmarshal(new File(new GuidGenerator().safeUUID()));
       fail();
-    }
-    catch (CoreException expected) {
-
+    } catch (CoreException expected) {
     }
   }
 
@@ -85,9 +83,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
       });
       fail();
-    }
-    catch (CoreException expected) {
-
+    } catch (CoreException expected) {
     }
   }
 
@@ -109,9 +105,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
       });
       fail();
-    }
-    catch (CoreException expected) {
-
+    } catch (CoreException expected) {
     }
   }
 
@@ -126,9 +120,7 @@ public class XStreamMarshallerTest extends BaseCase {
     try {
       createMarshaller().unmarshal(new URLString(new File(new GuidGenerator().safeUUID()).toURI().toURL()));
       fail();
-    }
-    catch (CoreException expected) {
-
+    } catch (CoreException expected) {
     }
   }
 
@@ -143,9 +135,7 @@ public class XStreamMarshallerTest extends BaseCase {
     try {
       createMarshaller().unmarshal(new File(new GuidGenerator().safeUUID()).toURI().toURL());
       fail();
-    }
-    catch (CoreException expected) {
-
+    } catch (CoreException expected) {
     }
   }
 
@@ -154,9 +144,7 @@ public class XStreamMarshallerTest extends BaseCase {
     try {
       createMarshaller().unmarshal((String) null);
       fail();
-    }
-    catch (IllegalArgumentException expected) {
-
+    } catch (IllegalArgumentException expected) {
     }
   }
 
@@ -174,7 +162,6 @@ public class XStreamMarshallerTest extends BaseCase {
     marshaller.setVariablePostfix(Constants.DEFAULT_VARIABLE_POSTFIX);
     Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -183,7 +170,6 @@ public class XStreamMarshallerTest extends BaseCase {
     marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE_WITH_LOGGING);
     Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -203,4 +189,5 @@ public class XStreamMarshallerTest extends BaseCase {
     assertEquals("MyWorkflowID1", adapter.getChannelList().get(1).getWorkflowList().get(0).getUniqueId());
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(1).getWorkflowList().get(1).getUniqueId());
   }
+
 }

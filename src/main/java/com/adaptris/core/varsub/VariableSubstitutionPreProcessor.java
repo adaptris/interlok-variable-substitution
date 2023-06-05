@@ -22,12 +22,12 @@ import com.adaptris.core.util.PropertyHelper;
 import com.adaptris.util.KeyValuePairSet;
 
 /**
- * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports variable substitution before
- * configuration is un-marshalled.
+ * Custom com.adaptris.core.runtime.ConfigurationPreProcessor implementation that supports variable substitution before configuration is
+ * un-marshalled.
  * <p>
  * This ConfigurationPreProcessor can be activated by the setting or appending to the bootstrap property
- * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be
- * <strong>variableSubstitution</strong> and making sure the required jars are available on the classpath.
+ * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be <strong>variableSubstitution</strong> and
+ * making sure the required jars are available on the classpath.
  * </p>
  * <p>
  * The following properties can be specified in the bootstrap.properties to control the behaviour of the variable substitution;
@@ -56,8 +56,8 @@ import com.adaptris.util.KeyValuePairSet;
  * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_PROPERTIES_URL_KEY}</td>
  * <td></td>
  * <td>Yes</td>
- * <td>The URL to the property file containing the list of substitutions; in the form of variableName=Value. One substitution per
- * line. Multiple property files are supported by specifying a unique suffix for each property file.</td>
+ * <td>The URL to the property file containing the list of substitutions; in the form of variableName=Value. One substitution per line.
+ * Multiple property files are supported by specifying a unique suffix for each property file.</td>
  * </tr>
  * <tr>
  * <td>{@value com.adaptris.core.varsub.Constants#VARSUB_PROPERTIES_USE_HOSTNAME}</td>
@@ -76,7 +76,7 @@ import com.adaptris.util.KeyValuePairSet;
  * </table>
  * </p>
  * For instance if you have in your bootstrap.properties
- * 
+ *
  * <pre>
  * <code>
  * preProcessors=variableSubstitution
@@ -84,22 +84,24 @@ import com.adaptris.util.KeyValuePairSet;
  * variable-substitution.properties.url.2=file://localhost//path/to/my/variables.2
  * variable-substitution.properties.url.3=file://localhost//path/to/my/variables-%1$s
  * variable-substitution.url.useHostname=true
- * </code> </pre>
- * 
- * And {@code .//path/to/my/variables.properties} / {@code /path/to/my/variables.2} /
- * {@code /path/to/my/variables-localhost.localdomain} contains
- * 
+ * </code>
+ * </pre>
+ *
+ * And {@code .//path/to/my/variables.properties} / {@code /path/to/my/variables.2} / {@code /path/to/my/variables-localhost.localdomain}
+ * contains
+ *
  * <pre>
  * <code>
  * broker.url=tcp://localhost:2506
  * broker.backup.url=tcp://my.host:2507
- * </code> </pre>
- * 
- * Then all instances of <code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced within the adapter.xml as
- * it is read in, but before the Adapter itself is unmarshalled. A warning is logged if a file cannot be accessed.
- * 
+ * </code>
+ * </pre>
+ *
+ * Then all instances of <code>${broker.url}</code> and <code>${broker.backup.url}</code> will be replaced within the adapter.xml as it is
+ * read in, but before the Adapter itself is unmarshalled. A warning is logged if a file cannot be accessed.
+ *
  * @author amcgrath
- * 
+ *
  */
 public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
 
@@ -123,8 +125,7 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     try {
       Properties vars = loadSubstitutions();
       result = new Processor(getProperties()).process(xml, vars);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -136,8 +137,7 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     try {
       Properties vars = loadSubstitutions();
       result = new Processor(getProperties()).process(urlToXml, vars);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
@@ -148,8 +148,8 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     Properties result = new Properties();
     // Get all the properties starting with variable-substitution.properties.url
     // sort; and then iterate through them adding them to the list of substitutions.
-    SortedSet<String> keys =
-        new TreeSet<>(PropertyHelper.getPropertySubset(getProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
+    SortedSet<String> keys = new TreeSet<>(
+        PropertyHelper.getPropertySubset(getProperties(), VARSUB_PROPERTIES_URL_KEY, true).stringPropertyNames());
     if (keys.size() == 0) {
       log.warn("Configuration variable substitution will have no effect; no properties file specified against key ({})",
           VARSUB_PROPERTIES_URL_KEY);
@@ -173,8 +173,7 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     Properties result = new Properties();
     if (BooleanUtils.toBoolean(getProperties().getProperty(VARSUB_PROPERTIES_USE_HOSTNAME, "false"))) {
       result = getPropertyFileLoader().formatAndLoad(val, false, hostname);
-    }
-    else {
+    } else {
       result = getPropertyFileLoader().load(val, false);
     }
     return result;

@@ -17,11 +17,12 @@ import com.adaptris.util.URLString;
  * <p>
  * Will load a properties file from either the String or URL path.
  * </p>
+ *
  * @author amcgrath
  *
  */
 class PropertyFileLoader {
-  
+
   private transient Logger log = LoggerFactory.getLogger("VariableSubstitution");
 
   public Properties load(String url) throws IOException {
@@ -31,7 +32,7 @@ class PropertyFileLoader {
   public Properties load(String url, boolean notFoundAsError) throws IOException {
     return load(new URLString(url), notFoundAsError);
   }
-  
+
   public Properties load(URL url) throws IOException {
     return load(url, true);
   }
@@ -54,12 +55,10 @@ class PropertyFileLoader {
         throw new FileNotFoundException(loc.toString());
       }
       result.load(inputStream);
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       if (notFoundAsError) {
         throw e;
-      }
-      else {
+      } else {
         log.warn("Failed to read [{}], ignoring", loc.toString());
       }
     }
@@ -74,4 +73,5 @@ class PropertyFileLoader {
     }
     return result;
   }
+
 }

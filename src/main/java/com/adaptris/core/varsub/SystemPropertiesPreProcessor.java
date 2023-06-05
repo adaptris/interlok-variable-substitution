@@ -15,12 +15,12 @@ import com.adaptris.core.management.BootstrapProperties;
 import com.adaptris.util.KeyValuePairSet;
 
 /**
- * Custom {@link com.adaptris.core.runtime.ConfigurationPreProcessor} implementation that supports substitution of system properties
- * before configuration is un-marshalled.
+ * Custom com.adaptris.core.runtime.ConfigurationPreProcessor implementation that supports substitution of system properties before
+ * configuration is un-marshalled.
  * <p>
  * This ConfigurationPreProcessor can be activated by the setting or appending to the bootstrap property
- * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be <strong>systemProperties</strong>
- * and making sure the required jars are available on the classpath.
+ * {@value com.adaptris.core.management.AdapterConfigManager#CONFIGURATION_PRE_PROCESSORS} to be <strong>systemProperties</strong> and
+ * making sure the required jars are available on the classpath.
  * </p>
  * <p>
  * The following properties can be specified in the bootstrap.properties to control the behaviour of the variable substitution;
@@ -55,15 +55,16 @@ import com.adaptris.util.KeyValuePairSet;
  * </table>
  * </p>
  * For instance if you have in your bootstrap.properties
- * 
+ *
  * <pre>
  * <code>
  * preProcessors=systemProperties
- * </code> </pre>
- * 
- * Then all available system properties (such as {@code user.dir}, provided they are marked as <code>${user.dir}</code>) will be
- * replaced within the adapter.xml as it is read in, but before the Adapter itself is unmarshalled.
- * 
+ * </code>
+ * </pre>
+ *
+ * Then all available system properties (such as {@code user.dir}, provided they are marked as <code>${user.dir}</code>) will be replaced
+ * within the adapter.xml as it is read in, but before the Adapter itself is unmarshalled.
+ *
  * @since 3.0.1
  */
 public class SystemPropertiesPreProcessor extends VariablePreProcessorImpl {
@@ -76,7 +77,6 @@ public class SystemPropertiesPreProcessor extends VariablePreProcessorImpl {
     super(kvps);
   }
 
-
   @Override
   protected String expand(String xml) throws CoreException {
     Properties cfg = getProperties();
@@ -86,4 +86,5 @@ public class SystemPropertiesPreProcessor extends VariablePreProcessorImpl {
     VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, System.getProperties(), variablePrefix, variablePostfix);
   }
+
 }
