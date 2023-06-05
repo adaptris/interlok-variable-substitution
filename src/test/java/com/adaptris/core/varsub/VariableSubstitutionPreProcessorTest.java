@@ -1,25 +1,30 @@
 package com.adaptris.core.varsub;
+
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_MISSING_SUBSTITUTION_PROPERTIES;
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_SUBSTITUTION_PROPERTIES;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Properties;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import com.adaptris.core.Adapter;
-import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.core.CoreException;
 import com.adaptris.core.DefaultMarshaller;
 import com.adaptris.core.stubs.JunitBootstrapProperties;
+import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.KeyValuePairSet;
 
 public class VariableSubstitutionPreProcessorTest extends BaseCase {
@@ -36,8 +41,8 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
   private Properties sampleBootstrapProperties;
 
   private AutoCloseable mocks;
-  
-  @Before
+
+  @BeforeEach
   public void setUp() throws Exception {
     mocks = MockitoAnnotations.openMocks(this);
 
@@ -52,8 +57,8 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     preProcessor = new VariableSubstitutionPreProcessor(new JunitBootstrapProperties(sampleBootstrapProperties));
     preProcessor.setPropertyFileLoader(propertyFileLoader);
   }
-  
-  @After
+
+  @AfterEach
   public void tearDown() throws Exception {
     mocks.close();
   }
@@ -84,21 +89,17 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
 
   @Test
   public void testSimpleVarSubAdapterRegistryWithProperPropertiesFile() throws Exception {
-
     Properties myBootstrapProperties = new Properties();
     myBootstrapProperties.put(Constants.VARSUB_PROPERTIES_USE_HOSTNAME, "true");
 
     myBootstrapProperties.put("variable-substitution.properties.url.1", PROPERTIES.getProperty(SAMPLE_SUBSTITUTION_PROPERTIES));
-    myBootstrapProperties.put("variable-substitution.properties.url.2",
-        PROPERTIES.getProperty(SAMPLE_MISSING_SUBSTITUTION_PROPERTIES));
-    VariableSubstitutionPreProcessor myPreProcessor = new VariableSubstitutionPreProcessor(
-        new KeyValuePairSet(myBootstrapProperties));
+    myBootstrapProperties.put("variable-substitution.properties.url.2", PROPERTIES.getProperty(SAMPLE_MISSING_SUBSTITUTION_PROPERTIES));
+    VariableSubstitutionPreProcessor myPreProcessor = new VariableSubstitutionPreProcessor(new KeyValuePairSet(myBootstrapProperties));
 
     String xml = myPreProcessor.process(variablesAdapterFile.toURI().toURL());
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -123,7 +124,6 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -223,7 +223,6 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -240,7 +239,6 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
-
   }
 
   @Test
@@ -250,7 +248,7 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     variableSubstitutions.remove("channel.id");
     variableSubstitutions.remove("workflow.id1");
 
- // We don't actually want to go to the file system for the variable substitutions
+    // We don't actually want to go to the file system for the variable substitutions
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
 
     String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
@@ -262,13 +260,14 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     assertEquals("MyWorkflowID2", adapter.getChannelList().get(0).getWorkflowList().get(1).getUniqueId());
   }
 
-  @Test(expected = CoreException.class)
+  @Test
   public void testSelfReferentialVariables() throws Exception {
     // We don't actually want to go to the file system for the variable substitutions
     Properties variableSubstitutions = createProperties();
     variableSubstitutions.setProperty("SELF_REFERENTIAL", "${SELF_REFERENTIAL}");
     when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
-    preProcessor.process(variablesAdapterFile.toURI().toURL());
+
+    assertThrows(CoreException.class, () -> preProcessor.process(variablesAdapterFile.toURI().toURL()));
   }
 
   private void doStandardAssertions(Adapter adapter) {
@@ -290,4 +289,5 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     subs.put("workflow.id2", "MyWorkflowID2");
     return subs;
   }
+
 }
