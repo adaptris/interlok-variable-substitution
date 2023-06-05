@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
