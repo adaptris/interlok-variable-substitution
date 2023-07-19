@@ -11,7 +11,7 @@ public enum VariableSubstitutionType {
     }
   },
   @Deprecated
-  @Removal(version = "4.0.0")
+  @Removal(version = "5.1.0")
   simple() {
     @Override
     VariableSubstitutable create() {
@@ -25,7 +25,7 @@ public enum VariableSubstitutionType {
     }
   },
   @Deprecated
-  @Removal(version = "4.0.0")
+  @Removal(version = "5.1.0")
   simpleWithLogging() {
     @Override
     VariableSubstitutable create() {
@@ -39,7 +39,7 @@ public enum VariableSubstitutionType {
     }
   },
   @Deprecated
-  @Removal(version = "4.0.0")
+  @Removal(version = "5.1.0")
   strict() {
     @Override
     VariableSubstitutable create() {
@@ -53,7 +53,7 @@ public enum VariableSubstitutionType {
     }
   },
   @Deprecated
-  @Removal(version = "4.0.0")
+  @Removal(version = "5.1.0")
   strictWithLogging() {
     @Override
     VariableSubstitutable create() {
