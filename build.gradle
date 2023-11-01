@@ -1,13 +1,15 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.apache.tools.ant.filters.*
+
 plugins {
-  id 'java-library'
-  id 'maven-publish'
-  id 'jacoco'
+  id "java-library"
+  id "maven-publish"
+  id "jacoco"
   // Manage optional dependencies in maven pom.
-  id 'nebula.optional-base' version '7.0.0'
-  id 'com.github.spotbugs' version '5.2.1'
-  id 'org.owasp.dependencycheck' version '8.4.2'
+  id "nebula.optional-base" version "7.0.0"
+  id "com.github.spotbugs" version "5.2.1"
+  id "org.sonarqube" version "4.4.1.3373"
+  id "org.owasp.dependencycheck" version "8.4.2"
   id "io.freefair.lombok" version "8.4"
 }
 
@@ -64,6 +66,14 @@ version = releaseVersion
 def versionDir = "$buildDir/version"
 def testDataDir = new File(project.buildDir, "testdata")
 lombok.disableConfig = true
+
+sonar {
+  properties {
+    property "sonar.projectKey", "adaptris_interlok-variable-substitution"
+    property "sonar.organization", "adaptris-org"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
 
 // Disable gradle module generation since we probably don't want
 // xxx.module files in your repository.
