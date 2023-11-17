@@ -1,11 +1,14 @@
 package com.adaptris.core.varsub;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileNotFoundException;
 import java.util.Properties;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
 import com.adaptris.interlok.junit.scaffolding.BaseCase;
 import com.adaptris.util.URLString;
 
@@ -39,7 +42,7 @@ public class PropertyFileLoaderTest extends BaseCase {
     try {
       propertyFileLoader.load(fileProperty);
       fail();
-    } catch (FileNotFoundException ignored){
+    } catch (FileNotFoundException ignored) {
       assertTrue(ignored.getMessage().contains("sample-missing-variable-substitutions.properties"));
     }
   }
@@ -51,9 +54,9 @@ public class PropertyFileLoaderTest extends BaseCase {
     try {
       propertyFileLoader.load(new URLString(fileProperty).getURL());
       fail();
-    }
-    catch (FileNotFoundException ignored) {
+    } catch (FileNotFoundException ignored) {
       assertTrue(ignored.getMessage().contains("sample-missing-variable-substitutions.properties"));
     }
   }
+
 }

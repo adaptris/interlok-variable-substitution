@@ -3,10 +3,13 @@ package com.adaptris.core.varsub;
 import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
+
 import com.adaptris.core.CoreException;
 import com.adaptris.core.management.properties.PropertyResolver;
 import com.adaptris.core.util.ExceptionHelper;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -77,8 +80,7 @@ public class VariableExpander {
     return result;
   }
 
-  private String handleExpansion(String key, String initialValue, Properties knownVariables)
-      throws Exception {
+  private String handleExpansion(String key, String initialValue, Properties knownVariables) throws Exception {
     String value = initialValue;
     Set<String> variables = createVariableNames(knownVariables);
     while (containsVariable(value, variables)) {
@@ -103,7 +105,6 @@ public class VariableExpander {
     return result;
   }
 
-
   private boolean containsVariable(String value, Set<String> variables) {
     for (String var : variables) {
       if (value.contains(var)) {
@@ -124,7 +125,7 @@ public class VariableExpander {
   }
 
   private Set<String> createVariableNames(Properties p) {
-    Set<String> variables = new LinkedHashSet<String>();
+    Set<String> variables = new LinkedHashSet<>();
     for (String key : p.stringPropertyNames()) {
       variables.add(createVariable(key));
     }
@@ -150,4 +151,5 @@ public class VariableExpander {
   private void setVarSuffix(String varSuffix) {
     this.varSuffix = varSuffix;
   }
+
 }
