@@ -13,7 +13,10 @@ import java.util.Properties;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
+import com.adaptris.annotation.ComponentProfile;
+import com.adaptris.annotation.DisplayOrder;
 import com.adaptris.annotation.InputFieldDefault;
 import com.adaptris.core.AdaptrisMessage;
 import com.adaptris.core.CoreException;
@@ -30,6 +33,9 @@ import lombok.Setter;
 /**
  * A service that does variable substitution to a string input
  */
+@AdapterComponent
+@ComponentProfile(summary = "Variable substitution on a message payload or metadata", tag = "service,varsub")
+@DisplayOrder(order = { "input", "output", "variables", "variablePrefix", "variablePostfix" })
 @XStreamAlias("variable-substitution-service")
 public class VariableSubstitutionService extends com.adaptris.core.ServiceImp {
 
