@@ -6,7 +6,7 @@ plugins {
   id 'jacoco'
   // Manage optional dependencies in maven pom.
   id 'nebula.optional-base' version '7.0.0'
-  id 'com.github.spotbugs' version '6.1.2'
+  id 'com.github.spotbugs' version '6.1.5'
   id 'org.owasp.dependencycheck' version '9.0.10'
   id "io.freefair.lombok" version "8.11"
 }
