@@ -130,8 +130,12 @@ public class VariableSubstitutionService extends com.adaptris.core.ServiceImp {
     if (properties.containsKey(LogMasking.LOG_MASKING_CONFIG_KEY)) {
       cfg.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY,  properties.getProperty(LogMasking.LOG_MASKING_CONFIG_KEY));
     }
-    String xml = new Processor(cfg).process(inputToProcess, properties);
+    String xml = buildProcessor(cfg).process(inputToProcess, properties);
     return xml;
+  }
+
+  Processor buildProcessor(Properties cfg) {
+    return new Processor(cfg);
   }
 
   private Properties loadSubstitutions(AdaptrisMessage msg) throws CoreException {
