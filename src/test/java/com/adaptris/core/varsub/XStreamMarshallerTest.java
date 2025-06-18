@@ -2,6 +2,7 @@ package com.adaptris.core.varsub;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +28,7 @@ public class XStreamMarshallerTest extends BaseCase {
 
   private static final String PROPS_VARIABLES_ADAPTER = "varsub.variables.adapter.xml";
   private static final String SAMPLE_SUBSTITUTION_PROPERTIES = "varsub.variables.properties";
+  private static final String SAMPLE_MASKED_SUBSTITUTION_PROPERTIES = "varsub.variables.masked.properties";
 
   private File variablesAdapterFile;
 
@@ -170,6 +174,26 @@ public class XStreamMarshallerTest extends BaseCase {
     marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE_WITH_LOGGING);
     Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
     doStandardAssertions(adapter);
+  }
+
+  @Test
+  public void testUnmarshal_WithMaskedLogging() throws Exception {
+    XStreamMarshaller marshaller = spy(createMarshaller());
+    marshaller.addVariablePropertiesUrls(PROPERTIES.getProperty(SAMPLE_MASKED_SUBSTITUTION_PROPERTIES));
+    marshaller.setSubstitutionType(VariableSubstitutionType.SIMPLE_WITH_LOGGING);
+    AtomicReference<Processor> processor = new AtomicReference<>();
+    AtomicReference<VariableExpander> expander = new AtomicReference<>();
+    when(marshaller.buildProcessor(any(Properties.class))).thenAnswer((props) -> {
+      processor.set(spy(new Processor(props.getArgument(0))));
+      when(processor.get().buildVariableExpander(any(), any())).thenAnswer((args) -> {
+        expander.set(spy(new VariableExpander("{", "}")));
+        return expander.get();
+      });
+      return processor.get();
+    });
+    Adapter adapter = (Adapter) marshaller.unmarshal(IOUtils.toString(variablesAdapterFile.toURI().toURL(), Charset.defaultCharset()));
+    doStandardAssertions(adapter);
+    verify(expander.get(), times(5)).doLog(anyString(), eq(LogMasking.DEFAULT_LOG_MASK));
   }
 
   @Test

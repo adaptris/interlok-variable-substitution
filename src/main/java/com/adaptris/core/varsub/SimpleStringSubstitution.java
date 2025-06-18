@@ -1,9 +1,11 @@
 package com.adaptris.core.varsub;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,18 +37,24 @@ public class SimpleStringSubstitution extends VariableSubstitutable {
 
   @Override
   public String doSubstitution(String input, Properties variableSubs, String variablePrefix, String variablePostFix) throws CoreException {
-    Set<String> keySet = variableSubs.stringPropertyNames();
+    Set<String> keySet = variableSubs.stringPropertyNames().stream().filter(s -> !s.equals(Constants.VARSUB_LOG_MASKED_VARIABLES_KEY)).collect(Collectors.toSet());
+    List<String> logMaskedKeys = LogMasking.getLogMaskingConfigKeys(variableSubs);
     String substitute = input;
     log.trace("Performing configuration variable substitution");
     for (String key : keySet) {
       String variable = variablePrefix + key + variablePostFix;
+      String substitution = variableSubs.getProperty(key);
       if (verboseMode) {
-        log.trace("Replacing {} with {}", variable, variableSubs.getProperty(key));
+        doLog(variable, getLogMaskedValue(logMaskedKeys, key, substitution));
       }
-      substitute = substitute.replace(variable, variableSubs.getProperty(key));
+      substitute = substitute.replace(variable, substitution);
     }
     validateSubstitutions(substitute, variablePrefix, variablePostFix);
     return substitute;
+  }
+
+  protected void doLog(String variable, String substitution) {
+    log.trace("Replacing {} with {}", variable, substitution);
   }
 
   private void validateSubstitutions(String input, String variablePrefix, String variablePostFix) throws CoreException {
