@@ -125,7 +125,12 @@ public class VariableSubstitutionService extends com.adaptris.core.ServiceImp {
 
   public String process(String inputToProcess, Properties properties) throws CoreException {
     Args.notNull(inputToProcess, "input");
-    String xml = new Processor(configAsProperties()).process(inputToProcess, properties);
+    Properties cfg = configAsProperties();
+    // if log masking is set, transfer it to Processor config
+    if (properties.containsKey(LogMasking.LOG_MASKING_CONFIG_KEY)) {
+      cfg.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY,  properties.getProperty(LogMasking.LOG_MASKING_CONFIG_KEY));
+    }
+    String xml = new Processor(cfg).process(inputToProcess, properties);
     return xml;
   }
 

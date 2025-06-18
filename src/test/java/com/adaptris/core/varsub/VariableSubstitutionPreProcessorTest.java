@@ -4,13 +4,14 @@ import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_MISSING_SUB
 import static com.adaptris.core.varsub.PropertyFileLoaderTest.SAMPLE_SUBSTITUTION_PROPERTIES;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 
 import com.adaptris.core.Adapter;
@@ -73,6 +75,32 @@ public class VariableSubstitutionPreProcessorTest extends BaseCase {
     Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
 
     doStandardAssertions(adapter);
+  }
+
+  @Test
+  public void testSimpleVarSubAdapterRegistryWithLogMasking() throws Exception {
+    // We don't actually want to go to the file system for the variable substitutions
+    Properties variableSubstitutions = createProperties();
+    variableSubstitutions.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY, "adapter.id,channel.id,channel.alternate.id,workflow.id1,workflow.id2");
+    when(propertyFileLoader.load(anyString(), anyBoolean())).thenReturn(variableSubstitutions);
+
+    preProcessor = spy(preProcessor);
+
+    AtomicReference<Processor> processor = new AtomicReference<>();
+    AtomicReference<VariableExpander> expander = new AtomicReference<>();
+    when(preProcessor.buildProcessor(any(Properties.class))).thenAnswer((props) -> {
+      processor.set(spy(new Processor(props.getArgument(0))));
+      when(processor.get().buildVariableExpander(any(), any())).thenAnswer((args) -> {
+        expander.set(spy(new VariableExpander("{", "}")));
+        return expander.get();
+      });
+      return processor.get();
+    });
+
+    String xml = preProcessor.process(variablesAdapterFile.toURI().toURL());
+    Adapter adapter = (Adapter) DefaultMarshaller.getDefaultMarshaller().unmarshal(xml);
+    doStandardAssertions(adapter);
+    verify(expander.get(), times(5)).doLog(anyString(), eq(LogMasking.DEFAULT_LOG_MASK));
   }
 
   @Test

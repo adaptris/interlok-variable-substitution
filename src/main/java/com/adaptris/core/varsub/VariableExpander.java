@@ -1,8 +1,6 @@
 package com.adaptris.core.varsub;
 
-import java.util.LinkedHashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,10 +49,16 @@ public class VariableExpander {
 
   private String varPrefix;
   private String varSuffix;
+  private List<String> keysToMask = Collections.emptyList();
 
   public VariableExpander(String prefix, String suffix) {
     setVarPrefix(prefix);
     setVarSuffix(suffix);
+  }
+
+  public VariableExpander withLogMasking(List<String> keysToMask) {
+    this.keysToMask = keysToMask;
+    return this;
   }
 
   public Properties resolve(Properties input) throws CoreException {
@@ -65,7 +69,7 @@ public class VariableExpander {
       Properties environment = PropertyFileLoader.getEnvironment();
       for (String key : resolved.stringPropertyNames()) {
         String value = resolved.getProperty(key);
-        log.trace("Initial key [{}], value[{}]", key, value);
+        doLog(key, getLogMaskedValue(key, value));
         // Loop through and sort out all the defined variables first.
         value = handleExpansion(key, value, resolved);
         // Now loop through and expand any system properties.
@@ -78,6 +82,14 @@ public class VariableExpander {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
+  }
+
+  void doLog(String key, String value) {
+    log.trace("Initial key [{}], value[{}]", key, value);
+  }
+
+  protected String getLogMaskedValue(String key, String value) {
+    return LogMasking.getLogMaskedValue(keysToMask, key, value);
   }
 
   private String handleExpansion(String key, String initialValue, Properties knownVariables) throws Exception {

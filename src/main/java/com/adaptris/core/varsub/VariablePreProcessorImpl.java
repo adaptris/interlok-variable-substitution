@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 
@@ -46,5 +48,15 @@ public abstract class VariablePreProcessorImpl extends ConfigPreProcessorImpl {
   }
 
   protected abstract String expand(String xml) throws Exception;
+
+  protected List<String> getLogMaskedKeys(Properties cfg) {
+    return LogMasking.getLogMaskingConfigKeys(cfg);
+  }
+
+  VariableSubstitutable build(String varSubImpl) {
+    VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
+    List<String> logMaskedKeys = getLogMaskedKeys(getProperties());
+    return impl.create().withLogMaskedKeys(logMaskedKeys);
+  }
 
 }

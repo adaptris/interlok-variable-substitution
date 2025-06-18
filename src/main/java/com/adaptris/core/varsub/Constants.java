@@ -44,6 +44,11 @@ public class Constants {
   public static final String VARSUB_PROPERTIES_URL_KEY = "variable-substitution.properties.url";
 
   /**
+   * The key in configuration defining a comma separated list of variables that should be masked
+   */
+  public static final String VARSUB_LOG_MASKED_VARIABLES_KEY = "variable-substitution.properties.maskedVariables";
+
+  /**
    * The key in configuration defining the properties file allowing formatting of the URL: {@value #VARSUB_PROPERTIES_USE_HOSTNAME}.
    * <p>
    * The default is false, but if set to true, then each URL defined by {@value #VARSUB_PROPERTIES_URL_KEY} will be formatted using
