@@ -96,8 +96,17 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
   @Override
   public Object unmarshal(String input) throws CoreException {
     Args.notNull(input, "input");
-    String xml = new Processor(configAsProperties()).process(input, loadSubstitutions());
+    Properties subs = loadSubstitutions();
+    Properties cfg = configAsProperties();
+    if (subs.containsKey(LogMasking.LOG_MASKING_CONFIG_KEY)) {
+      cfg.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY,  subs.getProperty(LogMasking.LOG_MASKING_CONFIG_KEY));
+    }
+    String xml = buildProcessor(cfg).process(input, subs);
     return getInstance().fromXML(xml);
+  }
+
+  Processor buildProcessor(Properties cfg) {
+    return new Processor(cfg);
   }
 
   @Override
@@ -166,7 +175,7 @@ public class XStreamMarshaller extends com.adaptris.core.XStreamMarshaller {
     return result;
   }
 
-  private Properties configAsProperties() {
+  Properties configAsProperties() {
     Properties config = new Properties();
     config.setProperty(VARSUB_PREFIX_KEY, variablePrefix());
     config.setProperty(VARSUB_POSTFIX_KEY, variableSuffix());

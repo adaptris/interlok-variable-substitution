@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -31,10 +32,21 @@ class Processor {
     String varSubImpl = defaultIfBlank(cfg.getProperty(VARSUB_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(VARSUB_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(VARSUB_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    Properties expandedVariables = new VariableExpander(variablePrefix, variablePostfix).resolve(variables);
+    Properties expandedVariables = buildVariableExpander(variablePrefix, variablePostfix)
+            .withLogMasking(getLogMaskedKeys(cfg))
+            .resolve(variables);
+
 
     VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
     return impl.create().doSubstitution(xml, expandedVariables, variablePrefix, variablePostfix);
+  }
+
+  protected VariableExpander buildVariableExpander(String variablePrefix, String variablePostfix) {
+    return new VariableExpander(variablePrefix, variablePostfix);
+  }
+
+  protected List<String> getLogMaskedKeys(Properties cfg) {
+    return LogMasking.getLogMaskingConfigKeys(cfg);
   }
 
   String process(URL urlToXml, Properties variables) throws CoreException {
