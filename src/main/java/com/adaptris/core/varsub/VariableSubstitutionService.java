@@ -10,8 +10,8 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import java.io.StringReader;
 import java.util.Properties;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import com.adaptris.annotation.AdapterComponent;
 import com.adaptris.annotation.AdvancedConfig;
