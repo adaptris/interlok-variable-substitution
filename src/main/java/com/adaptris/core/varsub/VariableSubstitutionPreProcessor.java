@@ -124,7 +124,11 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     String result = xml;
     try {
       Properties vars = loadSubstitutions();
-      result = new Processor(getProperties()).process(xml, vars);
+      Properties cfg = getProperties();
+      if (vars.containsKey(LogMasking.LOG_MASKING_CONFIG_KEY)) {
+        cfg.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY,  vars.getProperty(LogMasking.LOG_MASKING_CONFIG_KEY));
+      }
+      result = buildProcessor(cfg).process(xml, vars);
     } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
@@ -136,11 +140,19 @@ public class VariableSubstitutionPreProcessor extends ConfigPreProcessorImpl {
     String result = "";
     try {
       Properties vars = loadSubstitutions();
-      result = new Processor(getProperties()).process(urlToXml, vars);
+      Properties cfg = getProperties();
+      if (vars.containsKey(LogMasking.LOG_MASKING_CONFIG_KEY)) {
+        cfg.setProperty(LogMasking.LOG_MASKING_CONFIG_KEY,  vars.getProperty(LogMasking.LOG_MASKING_CONFIG_KEY));
+      }
+      result = buildProcessor(cfg).process(urlToXml, vars);
     } catch (Exception e) {
       throw ExceptionHelper.wrapCoreException(e);
     }
     return result;
+  }
+
+  Processor buildProcessor(Properties cfg) {
+    return new Processor(cfg);
   }
 
   private Properties loadSubstitutions() throws IOException, CoreException {

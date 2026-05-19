@@ -2,7 +2,9 @@ package com.adaptris.core.varsub;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.jupiter.api.Test;
@@ -114,6 +116,23 @@ public class SimpleStringSubstitutionTest {
     } catch (CoreException e) {
       assertTrue(e.getMessage().contains("${over} is undefined"));
     }
+  }
+
+  @Test
+  public void testSubstitutionWithMaskedLogging() throws Exception {
+    Properties props = new Properties();
+    props.put("fox", "fox");
+    SimpleStringSubstitution s = spy((SimpleStringSubstitution)VariableSubstitutionType.SIMPLE_WITH_LOGGING.create());
+
+    props.put(Constants.VARSUB_LOG_MASKED_VARIABLES_KEY, "fox");
+    s.doSubstitution(testInput, props, "${", "}");
+    verify(s).doSubstitution(testInput, props, "${", "}");
+    verify(s).getLogMaskedValue(List.of("fox"), "fox", "fox");
+    verify(s).doLog("${fox}", LogMasking.DEFAULT_LOG_MASK);
+
+    assertEquals("fox", s.getLogMaskedValue("fox", "fox"));
+    s.withLogMaskedKeys(List.of("fox"));
+    assertEquals(LogMasking.DEFAULT_LOG_MASK, s.getLogMaskedValue("fox", "fox"));
   }
 
 }

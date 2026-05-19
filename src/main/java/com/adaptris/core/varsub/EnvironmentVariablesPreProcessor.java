@@ -83,8 +83,7 @@ public class EnvironmentVariablesPreProcessor extends VariablePreProcessorImpl {
     String varSubImpl = defaultIfBlank(cfg.getProperty(ENVVAR_IMPL_KEY), DEFAULT_VAR_SUB_IMPL);
     String variablePrefix = defaultIfBlank(cfg.getProperty(ENVVAR_PREFIX_KEY), DEFAULT_VARIABLE_PREFIX);
     String variablePostfix = defaultIfBlank(cfg.getProperty(ENVVAR_POSTFIX_KEY), DEFAULT_VARIABLE_POSTFIX);
-    VariableSubstitutionType impl = VariableSubstitutionType.valueOf(varSubImpl);
-    return impl.create().doSubstitution(xml, PropertyFileLoader.getEnvironment(), variablePrefix, variablePostfix);
+    return build(varSubImpl).doSubstitution(xml, PropertyFileLoader.getEnvironment(), variablePrefix, variablePostfix);
   }
 
 }
