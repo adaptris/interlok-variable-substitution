@@ -7,7 +7,7 @@ plugins {
   id "jacoco"
   // Manage optional dependencies in maven pom.
   id "nebula.optional-base" version "7.0.0"
-  id "com.github.spotbugs" version "6.5.4"
+  id "com.github.spotbugs" version "6.5.5"
   id "org.sonarqube" version "6.3.1.5724"
   id "org.owasp.dependencycheck" version "12.2.2"
   id "io.freefair.lombok" version "8.14.2"
