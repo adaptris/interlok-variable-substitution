@@ -5,8 +5,6 @@ plugins {
   id "java-library"
   id "maven-publish"
   id "jacoco"
-  // Manage optional dependencies in maven pom.
-  id "nebula.optional-base" version "7.0.0"
   id "com.github.spotbugs" version "6.5.13"
   id "org.sonarqube" version "6.3.1.5724"
   id "org.owasp.dependencycheck" version "12.2.2"
@@ -59,8 +57,8 @@ ext.buildInfo = { ->
     }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 group   = 'com.adaptris'
 version = releaseVersion
 def versionDir = "$buildDir/version"
@@ -248,12 +246,12 @@ jacocoTestReport {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-  classifier = 'javadoc'
+  archiveClassifier = 'javadoc'
   from javadoc.destinationDir
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = 'sources'
+  archiveClassifier = 'sources'
   from sourceSets.main.extensions.delombokTask
 }
 
@@ -267,8 +265,8 @@ publishing {
     mavenJava(MavenPublication) {
       from components.java
 
-      artifact javadocJar { classifier "javadoc" }
-      artifact sourcesJar { classifier "sources" }
+      artifact javadocJar
+      artifact sourcesJar
 
       pom.withXml {
         asNode().appendNode("name", componentName)
